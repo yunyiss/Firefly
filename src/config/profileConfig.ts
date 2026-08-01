@@ -6,7 +6,7 @@ export const profileConfig: ProfileConfig = {
 	// 1. public 目录（以 "/" 开头，不优化）："/assets/images/avatar.webp"
 	// 2. src 目录（不以 "/" 开头，自动优化但会增加构建时间，推荐）："assets/images/avatar.webp"
 	// 3. 远程 URL："https://example.com/avatar.jpg"
-	avatar: "https://i1.hdslb.com/bfs/new_dyn/6a80d381fdf27add878b590056fcba1945082067.gif@1000w_1000h.avif",
+	avatar: "https://img.weibiyi.com/file/头像/1785575759717_131699024_p0.png",
 
 	// 名字
 	name: "未白",

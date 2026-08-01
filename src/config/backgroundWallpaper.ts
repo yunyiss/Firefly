@@ -39,12 +39,19 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 		// 桌面背景图片（支持单张或多张随机）
 		// desktop: "assets/images/DesktopWallpaper/d1.avif",
 		desktop: [
-			"https://t.alcy.cc/pc",
+			"https://img.weibiyi.com/file/pc背景/1785578283951_124182684_p0.png",
+			"https://img.weibiyi.com/file/pc背景/1785578284438_135782160_p0.png",
+			"https://img.weibiyi.com/file/pc背景/1785578281911_137332633_p0.jpg",
+			"https://img.weibiyi.com/file/pc背景/1785578242273_139555622_p0.jpg",
+			"https://img.weibiyi.com/file/pc背景/1785578283712_137386771_p0.jpg",
 			],
 		// 移动背景图片（支持单张或多张随机）
 		// mobile: "assets/images/MobileWallpaper/m1.avif",
 		mobile: [
-			"https://t.alcy.cc/mp",
+			"https://img.weibiyi.com/file/pe壁纸/1785580147288_137366344_p0.jpg",
+			"https://img.weibiyi.com/file/pe壁纸/1785580122011_139633248_p0.png",
+			"https://img.weibiyi.com/file/pe壁纸/1785580119968_122110827_p7.png",
+			"https://img.weibiyi.com/file/pe壁纸/1785580118539_118884159_p0.png",
 		],
 		// 背景视频播放地址
 		// 支持单个视频路径（字符串）或多个视频循环（数组）
@@ -125,7 +132,7 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			// 是否启用壁纸轮播；关闭时保持每次刷新随机显示一张
 			enable: true,
 			// 轮播切换间隔（毫秒）
-			interval: 5000,
+			interval: 7000,
 			// 过渡效果: 'fade' 渐变 | 'zoom' 缩放 | 'slide' 滑动 | 'kenburns' 旋转木马
 			transitionEffect: "zoom",
 		},
