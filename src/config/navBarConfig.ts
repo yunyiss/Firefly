@@ -78,30 +78,27 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 
 			// 关于页面
 			LinkPresets.About,
+
+			// GitHub
+			LinkPresets.GitHub,
 		],
 	});
 
 	// 自定义导航栏链接
-	links.push({
-		name: "链接",
-		url: "#",
-		icon: "material-symbols:link",
-		// 子菜单
-		children: [
-			{
-				name: "GitHub",
-				url: "https://github.com/yunyiss/Firefly",
-				external: true,
-				icon: "fa7-brands:github",
-			},
-			{
-				name: "Firefly文档",
-				url: "https://docs-firefly.cuteleaf.cn",
-				external: true,
-				icon: "material-symbols:docs",
-			},
-		],
-	});
+	// links.push({
+	// 	name: "链接",
+	// 	url: "#",
+	// 	icon: "material-symbols:link",
+	// 	// 子菜单
+	// 	children: [
+	// 		{
+	// 			name: "Firefly文档",
+	// 			url: "https://docs-firefly.cuteleaf.cn",
+	// 			external: true,
+	// 			icon: "material-symbols:docs",
+	// 		},
+	// 	],
+	// });
 
 	// 文档链接
 	// links.push({
@@ -190,6 +187,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "/anime/",
 		icon: "material-symbols:live-tv",
 		pageKey: "anime",
+	},
+	GitHub: {
+		name: "GitHub",
+		url: "https://github.com/yunyiss/Firefly",
+		external: true,
+		icon: "fa7-brands:github",
 	},
 };
 

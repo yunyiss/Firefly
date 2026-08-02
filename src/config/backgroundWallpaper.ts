@@ -39,26 +39,19 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 		// 桌面背景图片（支持单张或多张随机）
 		// desktop: "assets/images/DesktopWallpaper/d1.avif",
 		desktop: [
-			"https://img.weibiyi.com/file/pc背景/1785578283951_124182684_p0.png",
-			"https://img.weibiyi.com/file/pc背景/1785578284438_135782160_p0.png",
-			"https://img.weibiyi.com/file/pc背景/1785578281911_137332633_p0.jpg",
-			"https://img.weibiyi.com/file/pc背景/1785578242273_139555622_p0.jpg",
-			"https://img.weibiyi.com/file/pc背景/1785578283712_137386771_p0.jpg",
+			"https://img.weibiyi.com/random?type=img&dir=pc",
 			],
 		// 移动背景图片（支持单张或多张随机）
 		// mobile: "assets/images/MobileWallpaper/m1.avif",
 		mobile: [
-			"https://img.weibiyi.com/file/pe壁纸/1785580147288_137366344_p0.jpg",
-			"https://img.weibiyi.com/file/pe壁纸/1785580122011_139633248_p0.png",
-			"https://img.weibiyi.com/file/pe壁纸/1785580119968_122110827_p7.png",
-			"https://img.weibiyi.com/file/pe壁纸/1785580118539_118884159_p0.png",
+			"https://img.weibiyi.com/random?type=img&dir=mb",
 		],
 		// 背景视频播放地址
 		// 支持单个视频路径（字符串）或多个视频循环（数组）
 		// 支持远程视频URL，本地视频请放在 public/assets/videos/ 目录下
 		// playerUrl: "/assets/videos/firefly.mp4",
 		playerUrl: [
-			"https://www.image2url.com/r2/default/videos/1781765166391-f2ba6648-1597-40e0-9f0a-6768ae39e574.mp4",
+			"https://img.weibiyi.com/file/1785595859990_爱愿嘉年华.mp4",
 		],
 	},
 	// 横幅壁纸和全屏壁纸共享配置
