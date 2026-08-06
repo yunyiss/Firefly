@@ -64,6 +64,9 @@ const getDynamicNavBarConfig = (): NavBarConfig => {
 
 			// 番组计划
 			LinkPresets.Bangumi,
+
+			// 书签导航
+			LinkPresets.Booknav,
 		],
 	});
 
@@ -193,6 +196,12 @@ export const LinkPresets: Record<string, NavBarLink> = {
 		url: "https://github.com/yunyiss/Firefly",
 		external: true,
 		icon: "fa7-brands:github",
+	},
+	Booknav: {
+		name: "书签导航",
+		url: "/booknav/",
+		icon: "material-symbols:bookmarks",
+		pageKey: "booknav",
 	},
 };
 

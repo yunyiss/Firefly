@@ -47,7 +47,7 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			"https://img.weibiyi.com/random?type=img&dir=mb",
 		],
 		// 背景视频播放地址
-		// 支持单个视频路径（字符串）或多个视频循环（数组）
+		// 支持单个视频路径（字符串）或多个视频循环（数组，参考上面壁纸配置）
 		// 支持远程视频URL，本地视频请放在 public/assets/videos/ 目录下
 		// playerUrl: "/assets/videos/firefly.mp4",
 		playerUrl: [
@@ -67,7 +67,7 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 			// 主页横幅主标题
 			title: "Vbai Blog",
 			// 主页横幅主标题字体大小
-			titleSize: "4rem",
+			titleSize: "4.5rem",
 			// 主页横幅副标题
 			subtitle: [
 				"一米阳光，一杯咖啡，一份心情，一种生活",
@@ -91,14 +91,17 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 				pauseTime: 2000,
 			},
 		},
+		// 文章横幅信息："description" 显示描述，"meta" 显示日期、字数和阅读时长
+		postInfo: {
+			mode: "description",
+		},
 		// 导航栏配置
 		navbar: {
 			// 导航栏透明模式："semi" 半透明，"full" 完全透明，"semifull" 动态透明
 			transparentMode: "semifull",
-			// 是否开启毛玻璃模糊效果，开启可能会影响页面性能，如果不开启则是半透明，请根据自己的喜好开启
-			enableBlur: true,
-			// 毛玻璃模糊度
-			blur: 3,
+			// 毛玻璃模糊度，0 即关闭导航栏的毛玻璃
+			// 注意：导航栏子菜单与浮动面板始终保留毛玻璃，模糊度跟随此项但有最小值
+			blur: 5,
 		},
 		// 水波纹动画效果配置，开启会影响页面性能，请根据自己的喜好开启
 		waves: {

@@ -87,7 +87,7 @@ export function setHue(hue: number): void {
 	r.style.setProperty("--hue", String(hue));
 }
 
-export function applyThemeToDocument(theme: LIGHT_DARK_MODE) {
+export function applyThemeToDocument(theme: LIGHT_DARK_MODE): void {
 	// 检查是否在浏览器环境中
 	if (typeof document === "undefined") {
 		return;
@@ -178,7 +178,7 @@ export function setTheme(theme: LIGHT_DARK_MODE): void {
 }
 
 // 设置系统主题监听器
-export function setupSystemThemeListener() {
+export function setupSystemThemeListener(): void {
 	// 先清理之前的监听器
 	cleanupSystemThemeListener();
 
@@ -261,7 +261,7 @@ export function getStoredTheme(): LIGHT_DARK_MODE {
 }
 
 // 初始化主题监听器（用于页面加载后）
-export function initThemeListener() {
+export function initThemeListener(): void {
 	if (
 		typeof localStorage === "undefined" ||
 		typeof localStorage.getItem !== "function"
@@ -281,7 +281,7 @@ export function initThemeListener() {
 export function applyWallpaperModeToDocument(
 	mode: WALLPAPER_MODE,
 	animate = true,
-) {
+): void {
 	// 获取当前的壁纸模式
 	const currentMode =
 		(document.documentElement.getAttribute(
@@ -622,37 +622,31 @@ function updateNavbarTransparency(mode: WALLPAPER_MODE) {
 	if (!navbar) return;
 
 	let transparentMode: string;
-	let enableBlur: boolean;
 	let blurAmount: number;
 
 	// 根据当前壁纸模式设置导航栏透明模式和模糊效果
 	if (mode === WALLPAPER_OVERLAY) {
 		// 全屏透明模式
 		transparentMode = "none";
-		enableBlur = false;
 		blurAmount = 0;
 	} else if (mode === WALLPAPER_NONE) {
 		// 纯色背景模式
 		transparentMode = "none";
-		enableBlur = false;
 		blurAmount = 0;
 	} else if (mode === WALLPAPER_FULLSCREEN) {
 		// 全屏壁纸模式：使用 fullscreen 配置的透明模式和模糊效果
 		transparentMode =
 			backgroundWallpaper.common?.navbar?.transparentMode || "semi";
-		enableBlur = backgroundWallpaper.common?.navbar?.enableBlur ?? true;
 		blurAmount = backgroundWallpaper.common?.navbar?.blur ?? 20;
 	} else {
 		// Banner模式：使用配置的透明模式和模糊效果
 		transparentMode =
 			backgroundWallpaper.common?.navbar?.transparentMode || "semi";
-		enableBlur = backgroundWallpaper.common?.navbar?.enableBlur ?? true;
 		blurAmount = backgroundWallpaper.common?.navbar?.blur ?? 20;
 	}
 
 	// 更新导航栏的透明模式属性
 	navbar.setAttribute("data-transparent-mode", transparentMode);
-	navbar.setAttribute("data-enable-blur", String(enableBlur));
 	navbar.style.setProperty("--navbar-glass-blur", `${blurAmount}px`);
 
 	// 移除现有的透明模式类
