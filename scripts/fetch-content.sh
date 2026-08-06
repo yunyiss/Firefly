@@ -12,11 +12,8 @@ mkdir -p src/content/posts
 # 克隆
 git clone --depth 1 "$PRIVATE_REPO" .temp-private
 
-# 把仓库根目录下的所有 md 文件移到 posts/
-mv .temp-private/*.md src/content/posts/ 2>/dev/null || true
-
-# 如果有子文件夹也移过去
-mv .temp-private/*/ src/content/posts/ 2>/dev/null || true
+# 把仓库根目录下的所有文件移到 posts/
+mv .temp-private/* src/content/posts/ 2>/dev/null || true
 
 rm -rf .temp-private
 
