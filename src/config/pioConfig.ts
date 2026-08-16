@@ -85,34 +85,34 @@ export const spineModelConfig: SpineModelConfig = {
 // Live2D 看板娘配置 (使用 l2d-widget 库，文档：https://l2d-widget.hacxy.cn)
 export const live2dWidgetConfig: Live2DWidgetConfig = {
 	// Live2D 看板娘开关
-	enable: false,
+	enable: true,
 	// 模型配置，支持单个模型或数组（多模型切换）
 	model: [
 		{
 			// Live2D模型本地文件路径
-			path: "/pio/models/live2d/snow_miku/model.json",
+			path: "/pio/models/live2d/MaidElysia1010/MaidElysia.model3.json",
 			// 动作声音音量 范围0~1，默认 0（静音）
 			volume: 0,
 			// 模型缩放比例
-			scale: 1,
+			scale: 1.5,
 			// X轴偏移，范围 -2~2，正值向右
 			x: 0,
 			// Y轴偏移，范围 -2~2，正值向上
-			y: 0,
+			y: -0.4,
 		},
-		{
-			// 外部直连模型
-			path: "https://model.hacxy.cn/cat-black/model.json",
-			volume: 0,
-			scale: 1,
-			x: 0,
-			y: 0,
-		},
+		// {
+		// 	// 外部直连模型
+		// 	path: "https://model.hacxy.cn/cat-black/model.json",
+		// 	volume: 0,
+		// 	scale: 1,
+		// 	x: 0,
+		// 	y: 0,
+		// },
 	],
 	// 显示位置：bottom-left 或 bottom-right
 	position: "bottom-left" as const,
 	// 画布尺寸（px）
-	size: { width: 200, height: 200 },
+	size: { width: 300, height: 300 },
 	// 主题色，用于菜单、状态条等 UI 元素的背景色，默认 'rgba(96,165,250,0.9)'
 	primaryColor: "var(--l2d-msg-bg)",
 	// 入场/退场动画时长（ms）
@@ -138,11 +138,11 @@ export const live2dWidgetConfig: Live2DWidgetConfig = {
 				label: "休眠",
 				action: "sleep",
 			},
-			{
-				icon: "mdi:swap-horizontal",
-				label: "切换模型",
-				action: "switchModel",
-			},
+			// {
+			// 	icon: "mdi:swap-horizontal",
+			// 	label: "切换模型",
+			// 	action: "switchModel",
+			// },
 			{
 				icon: "mdi:github",
 				label: "GitHub",
