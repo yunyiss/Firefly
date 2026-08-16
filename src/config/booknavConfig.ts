@@ -72,7 +72,7 @@ export const booknavConfig: BooknavGroup[] = [
 		name: "项目",
 		icon: "material-symbols:code-rounded",
 		desc: "好用的开源项目",
-		weight: 90,
+		weight: 80,
 		items: [
 			{
 				title: "Firefly",
@@ -81,26 +81,12 @@ export const booknavConfig: BooknavGroup[] = [
 				icon: "/favicon/firefly-32.png",
 				weight: 10,
 			},
-		],
-	},
-	{
-		id: "design",
-		name: "设计",
-		icon: "material-symbols:palette-outline-rounded",
-		desc: "配色、图标与灵感来源",
-		weight: 90,
-		items: [
 			{
-				title: "Iconify",
-				url: "https://icon-sets.iconify.design",
-				desc: "海量开源图标集合搜索",
+				title: "Firefly Docs",
+				url: "https://docs-firefly.cuteleaf.cn",
+				desc: "Firefly 主题模板文档",
+				icon: "https://docs-firefly.cuteleaf.cn/logo.png",
 				weight: 10,
-			},
-			{
-				title: "iconfont",
-				url: "https://www.iconfont.cn",
-				desc: "阿里巴巴矢量图标库",
-				weight: 9,
 			},
 		],
 	},
@@ -109,8 +95,26 @@ export const booknavConfig: BooknavGroup[] = [
 		name: "工具",
 		icon: "material-symbols:build-outline-rounded",
 		desc: "顺手的在线小工具",
-		weight: 80,
+		weight: 92,
 		items: [
+			{
+				title: "CyberChef",
+				url: "https://cyberchef.org/",
+				desc: "数据处理的瑞士军刀",
+				weight: 10,
+			},
+			{
+				title: "MD5加解密",
+				url: "https://www.cmd5.com/",
+				desc: "专业的md5解密网站",
+				weight: 10,
+			},
+			{
+				title: "ctf在线编码",
+				url: "http://www.hiencode.com/",
+				desc: "提供各种编码和加密算法的在线平台",
+				weight: 10,
+			},
 			{
 				title: "TinyPNG",
 				url: "https://tinypng.com",
@@ -132,25 +136,135 @@ export const booknavConfig: BooknavGroup[] = [
 		],
 	},
 	{
-		id: "resources",
-		name: "资源",
-		icon: "material-symbols:auto-stories-outline-rounded",
-		desc: "文档、教程与阅读",
-		weight: 70,
+		id: "ctfarena",
+		name: "靶场",
+		icon: "material-symbols:flag-rounded",
+		desc: "ctf 网络安全靶场",
+		weight: 95,
 		items: [
 			{
-				title: "Firefly Docs",
-				url: "https://docs-firefly.cuteleaf.cn",
-				desc: "Firefly 主题模板文档",
-				icon: "https://docs-firefly.cuteleaf.cn/logo.png",
-				weight: 10,
+				title: "Hello CTF",
+				url: "https://hello-ctf.com",
+				desc: "新手友好的 CTF 夺旗赛入门教程",
 			},
 			{
-				title: "夏夜流萤",
-				url: "https://blog.cuteleaf.cn",
-				desc: "飞萤之火自无梦的长夜亮起",
-				weight: 9,
+				title: "NSSCTF",
+				url: "https://www.nssctf.cn",
+				desc: "面向 CTFer 的在线训练与竞赛平台",
+			},
+			{
+				title: "CTF²(BUUCTF)",
+				url: "https://ctf2.dasctf.com",
+				desc: "比赛训练复盘，在同一个系统里闭环",
+			},
+			{
+				title: "CTFshow",
+				url: "https://ctf.show",
+				desc: "提供CTF题目和资源",
+			},
+			{
+				title: "Bugku CTF",
+				url: "https://ctf.bugku.com/",
+				desc: "国内最活跃的CTF在线训练平台",
+			},
+			{
+				title: "CTFHub",
+				url: "https://www.ctfhub.com",
+				desc: "专注网络安全、白帽子技术的在线学习",
+			},
+			{
+				title: "红日靶场",
+				url: "http://vulnstack.qiyuanxuetang.net/",
+				desc: "网络安全渗透测试和攻防演练平台",
 			},
 		],
 	},
+	{
+		id: "recon",
+		name: "信息收集",
+		icon: "material-symbols:travel-explore-rounded",
+		desc: "资产测绘与网络空间搜索",
+		weight: 92,
+		items: [
+			{
+			title: "企查查",
+			url: "https://www.qcc.com/",
+			desc: "提供企业信息查询、知识产权等服务",
+			},
+			{
+			title: "微步情报社区",
+			url: "https://x.threatbook.com",
+			desc: "威胁情报查询与 IOC 分析",
+			},
+			{
+			title: "FOFA",
+			url: "https://fofa.info",
+			desc: "网络空间资产搜索引擎",
+			},
+			{
+			title: "Hunter",
+			url: "https://hunter.qianxin.com",
+			desc: "奇安信资产测绘平台",
+			},
+			{
+			title: "Quake",
+			url: "https://quake.360.net",
+			desc: "360 网络空间测绘",
+			},
+			{
+			title: "Shodan",
+			url: "https://www.shodan.io",
+			desc: "全球联网设备搜索",
+			},
+			{
+			title: "Censys",
+			url: "https://search.censys.io",
+			desc: "互联网资产搜索引擎",
+			},
+			{
+			title: "Zoomeye",
+			url: "https://www.zoomeye.org",
+			desc: "知道创宇网络空间雷达",
+			},
+		],
+	},
+	{
+		id: "src",
+		name: "SRC 漏洞平台",
+		icon: "material-symbols:bug-report-rounded",
+		desc: "企业安全应急响应中心",
+		weight: 90,
+		items: [
+			{
+			title: "补天平台",
+			url: "https://www.butian.net",
+			desc: "奇安信旗下漏洞响应平台",
+			},
+			{
+			title: "漏洞盒子",
+			url: "https://www.vulbox.com",
+			desc: "FreeBuf 旗下众测平台",
+			},
+			{
+			title: "CNVD",
+			url: "https://www.cnvd.org.cn",
+			desc: "国家信息安全漏洞共享平台",
+			},
+			{
+			title: "CVE",
+			url: "https://cve.mitre.org",
+			desc: "国际通用漏洞披露",
+			},
+			{
+			title: "HackerOne",
+			url: "https://hackerone.com",
+			desc: "国际漏洞赏金平台",
+			},
+			{
+			title: "Bugcrowd",
+			url: "https://bugcrowd.com",
+			desc: "国际众测与安全研究",
+			},
+		],
+	}
 ];
