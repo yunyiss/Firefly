@@ -2,27 +2,48 @@ import type { HomeConfig } from "../types/homeConfig";
 
 // ============================================================================
 // 官网风格首页配置
-// 首页 Hero 文字（标题/打字机副标题）请在 backgroundWallpaper.common.homeText 中配置
+// Hero 主标题/打字机副标题请在 backgroundWallpaper.common.homeText 中配置
 // 文章列表页位于 /posts/（含分页 /posts/page/N），导航入口在 navBarConfig 的「文章」菜单
 // ============================================================================
 export const homeConfig: HomeConfig = {
 	// 是否启用官网风格首页；关闭后首页回退为文章列表（第一页）
 	enable: true,
 
-	// Hero 区域按钮（全屏壁纸文字下方）
-	heroButtons: [
-		{
-			name: "进入博客",
-			url: "/posts/",
-			icon: "material-symbols:article",
-			primary: true,
+	// Hero 构图与装饰（左对齐构图参考 lxya.net）
+	hero: {
+		// "left" 左对齐大标题构图；"center" 居中构图（原版）
+		layout: "left",
+		// 左对齐构图标题字号（不填则桌面端默认 5.5rem，居中构图沿用壁纸配置的 titleSize）
+		// titleSize: "5.5rem",
+		// 身份标签（显示在标题下方，按需自行增删）
+		tags: [
+			{
+				name: "ACGN 爱好者",
+				icon: "material-symbols:favorite",
+			},
+			{
+				name: "技术宅",
+				icon: "material-symbols:terminal",
+			},
+			{
+				name: "躺平大师",
+				icon: "material-symbols:airline-seat-individual-suite",
+			},
+		],
+		// 右侧竖排装饰文字
+		verticalText: "虚数之树",
+		// 右下角斜置欢迎玻璃卡
+		badge: {
+			enable: true,
+			title: "未白 ?",
+			text: "WELCOME TO MY BLOG, ENJOY YOUR STAY!",
 		},
-		{
-			name: "关于我",
-			url: "/about/",
-			icon: "material-symbols:person",
-		},
-	],
+	},
+
+	// 实时时钟卡
+	clock: {
+		enable: true,
+	},
 
 	// 内容板块入口卡片
 	sectionCards: {
@@ -87,7 +108,7 @@ export const homeConfig: HomeConfig = {
 		],
 	},
 
-	// 统计条
+	// 统计卡
 	stats: {
 		enable: true,
 		showWords: true,

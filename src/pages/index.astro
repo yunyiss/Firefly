@@ -1,6 +1,7 @@
 ---
 import { Icon } from "astro-icon/components";
 import PostPage from "@/components/layout/PostPage.astro";
+import HomeClock from "@/components/pages/home/HomeClock.svelte";
 import HomeExplore from "@/components/pages/home/HomeExplore.astro";
 import HomeLatestPosts from "@/components/pages/home/HomeLatestPosts.astro";
 import HomeStats from "@/components/pages/home/HomeStats.astro";
@@ -23,13 +24,24 @@ const fallbackLastPage = Math.max(1, Math.ceil(allBlogPosts.length / pageSize));
 
 // 首页隐藏侧边栏（官网风格全宽板块），侧栏仍会渲染并由运行时脚本隐藏以保证 Swup 一致性
 const hideSidebar = homeEnabled;
+const showBentoRow =
+	homeEnabled && (homeConfig.clock.enable || homeConfig.stats.enable);
 ---
 
 <MainGridLayout title={siteConfig.title} hideSidebar={hideSidebar}>
   {
     homeEnabled ? (
       <div id="home-sections" class="flex flex-col gap-4">
-        {homeConfig.stats.enable && <HomeStats />}
+        {showBentoRow && (
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-5">
+            {homeConfig.clock.enable && (
+              <HomeClock client:load class="onload-animation md:col-span-2" />
+            )}
+            {homeConfig.stats.enable && (
+              <HomeStats class={homeConfig.clock.enable ? "md:col-span-3" : "md:col-span-5"} />
+            )}
+          </div>
+        )}
         {homeConfig.sectionCards.enable && (
           <HomeExplore style={`animation-delay: calc(var(--content-delay) + 50ms)`} />
         )}

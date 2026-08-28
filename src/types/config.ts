@@ -23,8 +23,11 @@ export type { FooterConfig } from "./footerConfig";
 export type { FriendLink, FriendsPageConfig } from "./friendsConfig";
 export type { GalleryAlbum, GalleryConfig } from "./galleryConfig";
 export type {
+	HomeClockConfig,
 	HomeConfig,
-	HomeHeroButton,
+	HomeHeroBadge,
+	HomeHeroConfig,
+	HomeHeroTag,
 	HomeLatestPostsConfig,
 	HomeSectionCard,
 	HomeSectionCardsConfig,

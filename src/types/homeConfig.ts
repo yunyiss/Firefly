@@ -1,21 +1,45 @@
 // 官网风格首页配置类型
-// 首页 Hero（主标题/副标题/打字机）沿用 backgroundWallpaper.common.homeText 配置，此处不重复配置
+// Hero 主标题与打字机副标题沿用 backgroundWallpaper.common.homeText 配置，此处只管构图与装饰
 
-/** Hero 区域入口按钮（显示在壁纸文字下方） */
-export interface HomeHeroButton {
-	/** 按钮文字 */
+/** Hero 身份标签 */
+export interface HomeHeroTag {
+	/** 标签文字 */
 	name: string;
-	/** 链接地址，支持站内路径与外链 */
-	url: string;
 	/** 可选图标（iconify 名称） */
 	icon?: string;
+	/** 可选链接（设置后标签可点击） */
+	url?: string;
 	/** 是否外部链接（新窗口打开） */
 	external?: boolean;
-	/** 是否主按钮（主题色高亮样式） */
-	primary?: boolean;
 }
 
-/** 内容板块入口卡片 */
+/** Hero 右下角装饰性欢迎卡（斜置玻璃卡） */
+export interface HomeHeroBadge {
+	enable: boolean;
+	/** 主文字 */
+	title: string;
+	/** 小字说明 */
+	text: string;
+}
+
+export interface HomeHeroConfig {
+	/**
+	 * Hero 排版构图
+	 * "left"  ：左对齐大标题构图（大标题 + 标签 + 口号，右侧竖排装饰）
+	 * "center"：居中构图（原版：标题 + 打字机副标题居中）
+	 */
+	layout: "left" | "center";
+	/** 左对齐构图下的标题字号（不填则桌面端默认 5.5rem，居中构图沿用 backgroundWallpaper 的 titleSize） */
+	titleSize?: string;
+	/** 身份标签（左对齐构图显示在标题下方） */
+	tags: HomeHeroTag[];
+	/** 右侧竖排装饰文字（左对齐构图） */
+	verticalText?: string;
+	/** 右下角斜置欢迎玻璃卡（左对齐构图） */
+	badge: HomeHeroBadge;
+}
+
+/** 板块入口卡片 */
 export interface HomeSectionCard {
 	/** 卡片标题 */
 	name: string;
@@ -44,11 +68,16 @@ export interface HomeSectionCardsConfig {
 	cards: HomeSectionCard[];
 }
 
-/** 统计条配置 */
+/** 统计卡配置 */
 export interface HomeStatsConfig {
 	enable: boolean;
 	/** 是否显示总字数 */
 	showWords: boolean;
+}
+
+/** 实时时钟卡配置 */
+export interface HomeClockConfig {
+	enable: boolean;
 }
 
 /** 最新文章板块配置 */
@@ -65,15 +94,17 @@ export interface HomeLatestPostsConfig {
 export interface HomeConfig {
 	/**
 	 * 是否启用官网风格首页
-	 * true ：首页展示板块卡片 / 统计 / 最新文章，文章列表位于 /posts/
+	 * true ：首页展示便当盒卡片 / 板块入口 / 最新文章，文章列表位于 /posts/
 	 * false：首页回退为文章列表（第一页），保持旧行为
 	 */
 	enable: boolean;
-	/** Hero 区域按钮 */
-	heroButtons: HomeHeroButton[];
+	/** Hero 构图与装饰 */
+	hero: HomeHeroConfig;
+	/** 实时时钟卡 */
+	clock: HomeClockConfig;
 	/** 板块入口卡片 */
 	sectionCards: HomeSectionCardsConfig;
-	/** 统计条 */
+	/** 统计卡 */
 	stats: HomeStatsConfig;
 	/** 最新文章 */
 	latestPosts: HomeLatestPostsConfig;
