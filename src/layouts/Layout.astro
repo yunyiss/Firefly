@@ -1530,9 +1530,25 @@ function disableAnimation() {
     scheduleContentOverflowEnhancements();
   }
 
-  // 检查当前页面是否为文章详情页
-  const isCurrentPagePost = () =>
-    window.location.pathname.includes("/posts/") || window.location.pathname.includes("/post/");
+  // 检查当前页面是否为文章详情页（/posts/ 文章列表页不算）
+  const isCurrentPagePost = () => {
+    const pathname = window.location.pathname;
+    if (pathname.includes("/post/")) return true;
+    if (!pathname.includes("/posts/")) return false;
+    return !/\/posts\/?(index\.html)?$/.test(pathname);
+  };
+
+  // 检查当前页面是否为首页（官网风格首页，隐藏侧栏全宽展示）
+  const isCurrentPageHome = () => {
+    const baseUrl = import.meta.env.BASE_URL || "/";
+    const pathname = window.location.pathname;
+    if (pathname === "/" || pathname === baseUrl) return true;
+    return baseUrl !== "/" && pathname === baseUrl.replace(/\/$/, "");
+  };
+
+  // 官网首页是否隐藏侧栏（来源：homeConfig.enable，Swup 切页后仍以路径实时判定）
+  import { homeConfig } from "@/config";
+  const HOME_HIDES_SIDEBAR = homeConfig.enable === true;
 
   // Grid 列类常量
   const GRID_COL_CLASSES = [
@@ -1578,8 +1594,15 @@ function disableAnimation() {
     const tabletSidebar = mainGrid.getAttribute("data-tablet-sidebar") || "left";
     const showBothSidebarsOnPostPage = mainGrid.getAttribute("data-show-both-sidebars-on-post") === "true";
 
-    // 侧边栏禁用 或 文章详情页隐藏侧边栏时，保持单列布局
+    // 侧边栏禁用 或 文章详情页隐藏侧边栏 或 官网首页隐藏侧栏时，保持单列布局
     if (!sidebarEnabled || (isPostPage && sidebarHideOnPost)) {
+      applySingleColLayout(mainGrid);
+      return;
+    }
+
+    const sidebarHideOnHome =
+      mainGrid.getAttribute("data-grid-hide-sidebar-on-home") === "true";
+    if ((sidebarHideOnHome || HOME_HIDES_SIDEBAR) && isCurrentPageHome()) {
       applySingleColLayout(mainGrid);
       return;
     }
@@ -1640,6 +1663,28 @@ function disableAnimation() {
         wrapper.style.removeProperty("display");
       }
     });
+
+    // 官网首页隐藏侧边栏（侧栏仍随页面渲染，保证 Swup 静态结构一致）
+    const isHomePage = isCurrentPageHome();
+    document.querySelectorAll<HTMLElement>("[data-hide-sidebar-on-home]").forEach((wrapper) => {
+      const hideOnHome =
+        wrapper.getAttribute("data-hide-sidebar-on-home") === "true" || HOME_HIDES_SIDEBAR;
+      if (isHomePage && hideOnHome) {
+        wrapper.style.setProperty("display", "none", "important");
+      } else {
+        wrapper.style.removeProperty("display");
+      }
+    });
+
+    // 官网首页隐藏分类导航栏（该元素在 Swup 容器外，跨页持久）
+    const categoryBarWrapper = document.getElementById("category-bar-wrapper");
+    if (categoryBarWrapper) {
+      if (isHomePage && HOME_HIDES_SIDEBAR) {
+        categoryBarWrapper.style.setProperty("display", "none", "important");
+      } else {
+        categoryBarWrapper.style.removeProperty("display");
+      }
+    }
 
     // 处理组件级别的 showOnPostPage 配置
     document.querySelectorAll(".widget-hide-on-post").forEach((widget) => {

@@ -35,5 +35,17 @@
       ]
     }
   ],
-  "cleanUrls": true
+  "cleanUrls": true,
+  "redirects": [
+    {
+      "source": "/posts/page/1",
+      "destination": "/posts/",
+      "permanent": false
+    },
+    {
+      "source": "/:n(\\d+)",
+      "destination": "/posts/page/:n",
+      "permanent": true
+    }
+  ]
 }

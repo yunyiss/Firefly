@@ -1,0 +1,105 @@
+---
+import { Icon } from "astro-icon/components";
+import PostCard from "@/components/layout/PostCard.astro";
+import { homeConfig } from "@/config";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import { getSortedPosts } from "@/utils/content-utils";
+import { getPostUrlBySlug, url } from "@/utils/url-utils";
+
+interface Props {
+	class?: string;
+	style?: string;
+}
+
+const { class: className, style } = Astro.props;
+
+const sectionTitle = homeConfig.latestPosts.title ?? i18n(I18nKey.recentPosts);
+
+const allPosts = await getSortedPosts();
+const latestPosts = allPosts.slice(0, homeConfig.latestPosts.count || 4);
+---
+
+<section
+  class:list={["card-base rounded-(--radius-large) p-4 md:p-6 onload-animation", className]}
+  style={style}
+  aria-label={sectionTitle}
+>
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-xl md:text-2xl font-bold text-black/90 dark:text-white/90">
+      {sectionTitle}
+    </h2>
+    <a
+      href={url("/posts/")}
+      class="group flex items-center gap-1 text-sm font-medium text-black/60 dark:text-white/60
+             hover:text-(--primary) transition-colors duration-150"
+    >
+      {homeConfig.latestPosts.moreText}
+      <Icon
+        is:inline
+        name="material-symbols:chevron-right-rounded"
+        class="h-4.5 w-4.5 transition-transform duration-200 group-hover:translate-x-0.5"
+        aria-hidden="true"
+      />
+    </a>
+  </div>
+
+  <div class="home-post-grid grid grid-cols-1 md:grid-cols-2 gap-4">
+    {
+      latestPosts.map((entry, index) => (
+        <PostCard
+          entry={entry}
+          title={entry.data.title}
+          tags={entry.data.tags}
+          category={entry.data.category}
+          published={entry.data.published}
+          updated={entry.data.updated}
+          url={getPostUrlBySlug(entry.id)}
+          image={entry.data.image}
+          description={entry.data.description}
+          draft={entry.data.draft}
+          pinned={entry.data.pinned}
+          password={!!entry.data.password}
+          loading={index < 2 ? "eager" : "lazy"}
+          class:list="onload-animation post-card-item"
+          style={`animation-delay: calc(var(--content-delay) + ${index * 50}ms);`}
+        />
+      ))
+    }
+  </div>
+</section>
+
+<style>
+  /* 复用 PostCard，以竖版卡片呈现在双列网格中（对齐文章页 grid 模式的样式） */
+  .home-post-grid :global(.post-card-wrapper) {
+    flex-direction: column-reverse;
+  }
+
+  .home-post-grid :global(.post-card-image) {
+    width: 100% !important;
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    border-radius: var(--radius-large) var(--radius-large) 0 0 !important;
+  }
+
+  .home-post-grid :global(.post-card-content) {
+    width: 100% !important;
+    padding: 1rem !important;
+  }
+
+  .home-post-grid :global(.no-cover .post-card-content) {
+    padding-right: 1rem !important;
+  }
+
+  .home-post-grid :global(.post-card-title) {
+    font-size: 1.2rem !important;
+    line-height: 1.65rem !important;
+  }
+
+  .home-post-grid :global(.post-card-title::before) {
+    display: none !important;
+  }
+</style>

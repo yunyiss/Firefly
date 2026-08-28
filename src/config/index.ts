@@ -19,6 +19,12 @@ export type {
 	FooterConfig,
 	GalleryAlbum,
 	GalleryConfig,
+	HomeConfig,
+	HomeHeroButton,
+	HomeLatestPostsConfig,
+	HomeSectionCard,
+	HomeSectionCardsConfig,
+	HomeStatsConfig,
 	LicenseConfig,
 	MermaidConfig,
 	MusicPlayerConfig,
@@ -57,6 +63,7 @@ export { fontConfig, fontsList } from "./fontConfig"; // 字体配置
 export { footerConfig } from "./footerConfig"; // 页脚配置
 export { friendsPageConfig, getEnabledFriends } from "./friendsConfig"; // 友链配置
 export { galleryConfig } from "./galleryConfig"; // 相册配置
+export { homeConfig } from "./homeConfig"; // 官网风格首页配置
 export { licenseConfig } from "./licenseConfig"; // 许可证配置
 // 组件配置
 export { mermaidConfig } from "./mermaidConfig"; // Mermaid 图表配置

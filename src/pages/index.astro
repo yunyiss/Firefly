@@ -1,0 +1,84 @@
+---
+import { Icon } from "astro-icon/components";
+import PostPage from "@/components/layout/PostPage.astro";
+import HomeExplore from "@/components/pages/home/HomeExplore.astro";
+import HomeLatestPosts from "@/components/pages/home/HomeLatestPosts.astro";
+import HomeStats from "@/components/pages/home/HomeStats.astro";
+import { homeConfig, siteConfig } from "@/config";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { getSortedPosts } from "@/utils/content-utils";
+import { url } from "@/utils/url-utils";
+
+// 官网风格首页；文章列表位于 /posts/（配置见 homeConfig）
+const homeEnabled = homeConfig.enable === true;
+
+// 回退模式（homeConfig.enable = false）下，首页直接渲染文章列表第一页
+const allBlogPosts = await getSortedPosts();
+const pageSize = siteConfig.pagination.postsPerPage;
+const fallbackPosts = allBlogPosts.slice(0, pageSize);
+const fallbackHasNext = allBlogPosts.length > pageSize;
+const fallbackLastPage = Math.max(1, Math.ceil(allBlogPosts.length / pageSize));
+
+// 首页隐藏侧边栏（官网风格全宽板块），侧栏仍会渲染并由运行时脚本隐藏以保证 Swup 一致性
+const hideSidebar = homeEnabled;
+---
+
+<MainGridLayout title={siteConfig.title} hideSidebar={hideSidebar}>
+  {
+    homeEnabled ? (
+      <div id="home-sections" class="flex flex-col gap-4">
+        {homeConfig.stats.enable && <HomeStats />}
+        {homeConfig.sectionCards.enable && (
+          <HomeExplore style={`animation-delay: calc(var(--content-delay) + 50ms)`} />
+        )}
+        {homeConfig.latestPosts.enable && (
+          <HomeLatestPosts style={`animation-delay: calc(var(--content-delay) + 100ms)`} />
+        )}
+      </div>
+    ) : (
+      <>
+        <PostPage page={{ data: fallbackPosts }} />
+        {fallbackLastPage > 1 && (
+          <div
+            class="mx-auto flex flex-row items-center justify-center gap-3 onload-animation"
+            role="navigation"
+            aria-label={i18n(I18nKey.postList)}
+            style={`animation-delay: calc(var(--content-delay) + ${fallbackPosts.length * 50}ms)`}
+          >
+            <a
+              href="#"
+              aria-label={i18n(I18nKey.paginationPrev)}
+              aria-disabled="true"
+              tabindex="-1"
+              class:list={[
+                "btn-card overflow-hidden rounded-(--radius-large) text-(--primary) w-11 h-11",
+                "opacity-50 cursor-not-allowed",
+              ]}
+            >
+              <Icon is:inline name="material-symbols:chevron-left-rounded" class="text-[1.75rem]" aria-hidden="true" />
+            </a>
+            <div class="btn-card flex items-center rounded-(--radius-large) px-4 h-11 gap-1.5">
+              <span class="text-base font-bold text-(--primary)">1</span>
+              <span class="text-sm text-neutral-500 dark:text-neutral-500">/</span>
+              <span class="text-base font-bold text-neutral-700 dark:text-neutral-300">{fallbackLastPage}</span>
+            </div>
+            <a
+              href={fallbackHasNext ? url("/posts/page/2/") : "#"}
+              aria-label={i18n(I18nKey.paginationNext)}
+              aria-disabled={fallbackHasNext ? "false" : "true"}
+              tabindex={fallbackHasNext ? "0" : "-1"}
+              class:list={[
+                "btn-card overflow-hidden rounded-(--radius-large) text-(--primary) w-11 h-11",
+                fallbackHasNext ? "" : "opacity-50 cursor-not-allowed",
+              ]}
+            >
+              <Icon is:inline name="material-symbols:chevron-right-rounded" class="text-[1.75rem]" aria-hidden="true" />
+            </a>
+          </div>
+        )}
+      </>
+    )
+  }
+</MainGridLayout>

@@ -1,0 +1,92 @@
+---
+import { Icon } from "astro-icon/components";
+import PostPage from "@/components/layout/PostPage.astro";
+import { siteConfig } from "@/config";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { getSortedPosts } from "@/utils/content-utils";
+import { url } from "@/utils/url-utils";
+
+// 文章列表第一页（/posts/）；第 2 页起在 posts/page/[page].astro 中生成
+const allBlogPosts = await getSortedPosts();
+const pageSize = siteConfig.pagination.postsPerPage;
+const firstPagePosts = allBlogPosts.slice(0, pageSize);
+const hasNextPage = allBlogPosts.length > pageSize;
+const lastPage = Math.max(1, Math.ceil(allBlogPosts.length / pageSize));
+
+const len = firstPagePosts.length;
+---
+
+<MainGridLayout title={i18n(I18nKey.postList)}>
+  <PostPage page={{ data: firstPagePosts }} />
+  {
+    lastPage > 1 && (
+      <div class="mx-auto flex flex-row items-center justify-center gap-3 onload-animation" role="navigation" aria-label={i18n(I18nKey.postList)} style={`animation-delay: calc(var(--content-delay) + ${len * 50}ms)`}>
+        <a
+          href="#"
+          aria-label={i18n(I18nKey.paginationPrev)}
+          aria-disabled="true"
+          tabindex="-1"
+          class:list={[
+            "btn-card overflow-hidden rounded-(--radius-large) text-(--primary) w-11 h-11",
+            "opacity-50 cursor-not-allowed",
+          ]}
+        >
+          <Icon is:inline name="material-symbols:chevron-left-rounded" class="text-[1.75rem]" aria-hidden="true" />
+        </a>
+        <div class="btn-card flex items-center rounded-(--radius-large) px-4 h-11 gap-1.5">
+          <span class="text-base font-bold text-(--primary)">1</span>
+          <span class="text-sm text-neutral-500 dark:text-neutral-500">/</span>
+          <span class="text-base font-bold text-neutral-700 dark:text-neutral-300">{lastPage}</span>
+        </div>
+        <a
+          href={hasNextPage ? url("/posts/page/2/") : "#"}
+          aria-label={i18n(I18nKey.paginationNext)}
+          aria-disabled={hasNextPage ? "false" : "true"}
+          tabindex={hasNextPage ? "0" : "-1"}
+          class:list={[
+            "btn-card overflow-hidden rounded-(--radius-large) text-(--primary) w-11 h-11",
+            hasNextPage ? "" : "opacity-50 cursor-not-allowed",
+          ]}
+        >
+          <Icon is:inline name="material-symbols:chevron-right-rounded" class="text-[1.75rem]" aria-hidden="true" />
+        </a>
+      </div>
+    )
+  }
+</MainGridLayout>
+
+<script>
+  // 响应式分页处理脚本
+  document.addEventListener("DOMContentLoaded", function () {
+    const deviceType = getDeviceType();
+    document.body.classList.add(`device-${deviceType}`);
+
+    // 监听窗口大小变化
+    let resizeTimeout: any;
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(function () {
+        const newDeviceType = getDeviceType();
+        const currentDeviceType = document.body.className.match(
+          /device-(mobile|tablet|desktop)/
+        )?.[1];
+
+        if (currentDeviceType !== newDeviceType) {
+          document.body.classList.remove(`device-${currentDeviceType}`);
+          document.body.classList.add(`device-${newDeviceType}`);
+        }
+      }, 250);
+    });
+  });
+
+  function getDeviceType() {
+    if (typeof window === "undefined") return "desktop";
+
+    const width = window.innerWidth;
+    if (width < 768) return "mobile";
+    if (width < 1024) return "tablet";
+    return "desktop";
+  }
+</script>

@@ -1,0 +1,75 @@
+---
+import { Icon } from "astro-icon/components";
+import { homeConfig, siteConfig } from "@/config";
+import { url } from "@/utils/url-utils";
+
+interface Props {
+	class?: string;
+	style?: string;
+}
+
+const { class: className, style } = Astro.props;
+
+// 按 siteConfig.pages 过滤被关闭页面的卡片
+const pages = siteConfig.pages;
+const cards = homeConfig.sectionCards.cards.filter(
+	(card) =>
+		!card.pageKey || pages[card.pageKey as keyof typeof pages] !== false,
+);
+---
+
+<section
+  class:list={["card-base rounded-(--radius-large) p-4 md:p-6 onload-animation", className]}
+  style={style}
+  aria-label={homeConfig.sectionCards.title}
+>
+  <div class="flex items-baseline gap-3 mb-4">
+    <h2 class="text-xl md:text-2xl font-bold text-black/90 dark:text-white/90">
+      {homeConfig.sectionCards.title}
+    </h2>
+    {
+      homeConfig.sectionCards.subtitle && (
+        <p class="text-sm text-black/50 dark:text-white/50">
+          {homeConfig.sectionCards.subtitle}
+        </p>
+      )
+    }
+  </div>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+    {
+      cards.map((card) => (
+        <a
+          href={card.external ? card.url : url(card.url)}
+          target={card.external ? "_blank" : undefined}
+          rel={card.external ? "noopener noreferrer" : undefined}
+          class="group relative flex flex-col gap-3 rounded-xl p-4 overflow-hidden
+                 bg-(--btn-plain-bg-hover) hover:bg-(--btn-card-bg-hover) active:scale-[0.97]
+                 transition-all duration-200 ease-out"
+        >
+          <div class="flex items-center justify-between">
+            <div class="h-10 w-10 rounded-lg bg-(--card-bg) flex items-center justify-center
+                        text-(--primary) transition-transform duration-200 group-hover:scale-110">
+              <Icon is:inline name={card.icon} class="h-5 w-5" aria-hidden="true" />
+            </div>
+            <Icon
+              is:inline
+              name="material-symbols:chevron-right-rounded"
+              class="h-5 w-5 text-black/30 dark:text-white/30
+                     opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0
+                     transition-all duration-200"
+              aria-hidden="true"
+            />
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <span class="font-bold text-black/85 dark:text-white/85 transition-colors duration-150 group-hover:text-(--primary)">
+              {card.name}
+            </span>
+            <span class="text-xs md:text-sm text-black/50 dark:text-white/50 leading-snug">
+              {card.description}
+            </span>
+          </div>
+        </a>
+      ))
+    }
+  </div>
+</section>

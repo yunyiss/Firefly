@@ -1,0 +1,95 @@
+---
+import { Icon } from "astro-icon/components";
+import { homeConfig, siteConfig } from "@/config";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import {
+	getCategoryList,
+	getSortedPosts,
+	getTagList,
+} from "@/utils/content-utils";
+
+interface Props {
+	class?: string;
+	style?: string;
+}
+
+const { class: className, style } = Astro.props;
+
+const posts = await getSortedPosts();
+const categories = await getCategoryList();
+const tags = await getTagList();
+
+// 计算总字数（移除代码块后统计中英文字符）
+let totalWords = 0;
+for (const post of posts) {
+	if (post.body) {
+		const text = post.body
+			.replace(/```[\s\S]*?```/g, "")
+			.replace(/`[^`]*`/g, "")
+			.replace(/\s+/g, " ")
+			.trim();
+		const chineseChars = text.match(/[\u4e00-\u9fa5]/g) || [];
+		const englishChars = text.match(/[a-zA-Z]/g) || [];
+		totalWords += chineseChars.length + englishChars.length;
+	}
+}
+
+// 运行天数（构建时计算，随部署刷新）
+const siteStartDate = siteConfig.siteStartDate || "2025-01-01";
+const runningDays = Math.ceil(
+	Math.abs(Date.now() - new Date(siteStartDate).getTime()) /
+		(1000 * 60 * 60 * 24),
+);
+
+const stats = [
+	{
+		icon: "material-symbols:article-outline",
+		label: i18n(I18nKey.siteStatsPostCount),
+		value: posts.length.toLocaleString(),
+	},
+	{
+		icon: "material-symbols:folder-outline",
+		label: i18n(I18nKey.siteStatsCategoryCount),
+		value: categories.length.toLocaleString(),
+	},
+	{
+		icon: "material-symbols:label-outline",
+		label: i18n(I18nKey.siteStatsTagCount),
+		value: tags.length.toLocaleString(),
+	},
+	...(homeConfig.stats.showWords
+		? [
+				{
+					icon: "material-symbols:text-ad-outline-rounded",
+					label: i18n(I18nKey.siteStatsTotalWords),
+					value: totalWords.toLocaleString(),
+				},
+			]
+		: []),
+	{
+		icon: "material-symbols:calendar-clock-outline",
+		label: i18n(I18nKey.siteStatsRunningDays),
+		value:
+			`${runningDays} ${i18n(I18nKey.siteStatsDays).replace("{days}", "")}`.trim(),
+	},
+];
+---
+
+<section
+  class:list={["card-base rounded-(--radius-large) px-4 py-3.5 md:px-6 md:py-4 onload-animation", className]}
+  style={style}
+  aria-label={i18n(I18nKey.siteStats)}
+>
+  <div class="flex flex-wrap items-center justify-between gap-x-6 gap-y-2">
+    {
+      stats.map((stat) => (
+        <div class="flex items-center gap-2">
+          <Icon is:inline name={stat.icon} class="h-5 w-5 text-(--primary)" aria-hidden="true" />
+          <span class="text-sm text-black/60 dark:text-white/60">{stat.label}</span>
+          <span class="text-base font-bold text-black/85 dark:text-white/85">{stat.value}</span>
+        </div>
+      ))
+    }
+  </div>
+</section>

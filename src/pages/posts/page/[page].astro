@@ -1,0 +1,83 @@
+---
+import type { GetStaticPaths } from "astro";
+import Pagination from "@/components/common/Pagination.astro";
+import PostPage from "@/components/layout/PostPage.astro";
+import { siteConfig } from "@/config";
+import I18nKey from "@/i18n/i18nKey";
+import { i18n } from "@/i18n/translation";
+import MainGridLayout from "@/layouts/MainGridLayout.astro";
+import { getSortedPosts } from "@/utils/content-utils";
+import { url } from "@/utils/url-utils";
+
+// 文章列表分页（/posts/page/N，N 从 2 开始）；第一页由 posts/index.astro 渲染
+export const getStaticPaths = (async ({ paginate }) => {
+	const allBlogPosts = await getSortedPosts();
+	const pageSize = siteConfig.pagination.postsPerPage;
+	return paginate(allBlogPosts, { pageSize })
+		.slice(1)
+		.map((result) => ({
+			params: { page: String(result.props.page.currentPage) },
+			props: { page: result.props.page },
+		}));
+}) satisfies GetStaticPaths;
+
+const rawPage = Astro.props.page;
+
+// 第一页由 /posts/ 渲染，修正「上一页」链接，避免指向不存在的 /posts/page/1/
+const page = {
+	...rawPage,
+	url: {
+		...rawPage.url,
+		prev: rawPage.currentPage === 2 ? url("/posts/") : rawPage.url.prev,
+	},
+};
+
+const len = page.data.length;
+---
+
+<MainGridLayout title={i18n(I18nKey.postList)}>
+  <PostPage page={page} />
+  {
+    page.total > page.size && (
+      <Pagination
+        class="mx-auto onload-animation"
+        page={page}
+        style={`animation-delay: calc(var(--content-delay) + ${len * 50}ms)`}
+      />
+    )
+  }
+</MainGridLayout>
+
+<script>
+  // 响应式分页处理脚本
+  document.addEventListener("DOMContentLoaded", function () {
+    const deviceType = getDeviceType();
+    document.body.classList.add(`device-${deviceType}`);
+
+    // 监听窗口大小变化
+    let resizeTimeout: any;
+    window.addEventListener("resize", function () {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(function () {
+        const newDeviceType = getDeviceType();
+        const currentDeviceType = document.body.className.match(
+          /device-(mobile|tablet|desktop)/
+        )?.[1];
+
+        if (currentDeviceType !== newDeviceType) {
+          document.body.classList.remove(`device-${currentDeviceType}`);
+          document.body.classList.add(`device-${newDeviceType}`);
+        }
+      }, 250);
+    });
+  });
+
+  function getDeviceType() {
+    if (typeof window === "undefined") return "desktop";
+
+    const width = window.innerWidth;
+    if (width < 768) return "mobile";
+    if (width < 1024) return "tablet";
+    return "desktop";
+  }
+</script>

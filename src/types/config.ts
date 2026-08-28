@@ -22,6 +22,14 @@ export type { FontSelectionConfig } from "./fontConfig";
 export type { FooterConfig } from "./footerConfig";
 export type { FriendLink, FriendsPageConfig } from "./friendsConfig";
 export type { GalleryAlbum, GalleryConfig } from "./galleryConfig";
+export type {
+	HomeConfig,
+	HomeHeroButton,
+	HomeLatestPostsConfig,
+	HomeSectionCard,
+	HomeSectionCardsConfig,
+	HomeStatsConfig,
+} from "./homeConfig";
 export type { LicenseConfig } from "./licenseConfig";
 export type { MermaidConfig } from "./mermaidConfig";
 export type { MusicPlayerConfig } from "./musicConfig";
