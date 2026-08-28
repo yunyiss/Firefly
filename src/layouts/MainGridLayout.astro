@@ -659,7 +659,7 @@ const hasMultipleImages =
                     <div class="hero-left-scrim pointer-events-none absolute inset-x-0 bottom-0 h-[62%]"></div>
 
                     <!-- 左对齐大标题构图 -->
-                    <div class="relative mx-auto w-full max-w-(--page-width) px-6 pb-[15vh] pt-24 md:px-12 md:pb-[14vh]">
+                    <div class="hero-content relative mx-auto w-full max-w-(--page-width) px-6 pb-[15vh] pt-24 md:px-12 md:pb-[14vh]">
                         <div class="max-w-[44rem] text-left">
                             {backgroundWallpaper.common?.homeText?.title && (
                                 <div class="banner-title hero-title font-bold text-white mb-3 lg:mb-4 leading-[1.15]" style={{ "--banner-title-size": heroTitleSize }}>
@@ -934,6 +934,9 @@ const hasMultipleImages =
 </>
 )}
 
+<!-- 官网首页滚动毛玻璃层：壁纸常驻背景下，下滑时对壁纸做模糊+压暗，由运行时脚本按路径与滚动位置驱动 -->
+<div id="home-frosted-layer" class="pointer-events-none" aria-hidden="true"></div>
+
 <!-- Main content -->
 <div class={`absolute w-full z-30 pointer-events-none ${mobileNonHomeBannerClass ? 'mobile-main-no-banner' : ''} ${!(isBannerMode && isBackgroundEnabled) ? 'no-banner-layout' : ''}`} style={isFullscreenMode ? 'top: 0;' : `top: ${finalMainPanelTop}`}>
     <!-- The pointer-events-none here prevent blocking the click event of the TOC -->
@@ -1099,6 +1102,27 @@ const hasMultipleImages =
   }
 
   /* ===== 官网首页 Hero 左对齐构图 ===== */
+  /* 覆盖主题在 ≥481px 对 overlay 直接子元素的限宽/居中规则（原为居中构图服务） */
+  @media (min-width: 481px) {
+    .banner-home-text-overlay.hero-layout-left {
+      align-items: flex-end !important;
+      justify-content: flex-start !important;
+      text-align: left !important;
+    }
+
+    .banner-home-text-overlay.hero-layout-left > div {
+      width: auto !important;
+      text-align: left !important;
+      margin-bottom: 0 !important;
+    }
+
+    /* 遮罩层与文字容器拉满整行 */
+    .banner-home-text-overlay.hero-layout-left .hero-left-scrim,
+    .banner-home-text-overlay.hero-layout-left .hero-content {
+      width: 100% !important;
+    }
+  }
+
   /* 随机壁纸/视频下保证左下文字可读的渐变遮罩 */
   .hero-left-scrim {
     background: linear-gradient(
@@ -1134,6 +1158,30 @@ const hasMultipleImages =
     .hero-layout-left .hero-left-scrim {
       height: 50%;
     }
+  }
+
+  /* ===== 官网首页常驻壁纸 + 滚动毛玻璃 ===== */
+  /* 首页（全屏壁纸模式）壁纸 sticky 常驻：不脱离文档流（内容位置不变），滚动时固定在视口做背景 */
+  body.home-wallpaper-fixed #wallpaper-wrapper.wallpaper-fullscreen {
+    position: sticky !important;
+    top: 0 !important;
+  }
+
+  /* 常驻壁纸上，首页卡片使用半透明底色（与 overlay 模式同一变量） */
+  body.home-wallpaper-fixed .card-base {
+    background-color: var(--card-bg-transparent) !important;
+  }
+
+  /* 滚动毛玻璃层：位于壁纸（z-10）与内容（z-30）之间，透明度由脚本按滚动位置驱动 */
+  #home-frosted-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 15;
+    opacity: 0;
+    pointer-events: none;
+    background: rgb(0 0 0 / 0.18);
+    backdrop-filter: blur(16px) saturate(1.15);
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
   }
 
 </style>

@@ -1698,7 +1698,43 @@ function disableAnimation() {
 
     // 组件可见性变化后，立即重算 sticky 间距，避免 swup 切页后残留旧间距
     updateSidebarStickySpacing();
+
+    // 官网首页滚动特效（壁纸常驻 + 毛玻璃 + Hero 移出）
+    updateHomeScrollFx();
   }
+
+  // 官网首页（全屏壁纸模式）：壁纸 sticky 常驻做背景，下滑时叠加毛玻璃层，
+  // Hero 文案随滚动上移模拟自然滚出。非首页或非全屏模式自动还原。
+  function updateHomeScrollFx() {
+    const wrapper = document.getElementById("wallpaper-wrapper");
+    const isHome = isCurrentPageHome();
+    const fullscreenMode =
+      document.documentElement.getAttribute("data-wallpaper-mode") === "fullscreen";
+    const enable = isHome && fullscreenMode && !!wrapper;
+
+    document.body.classList.toggle("home-wallpaper-fixed", enable);
+
+    const frosted = document.getElementById("home-frosted-layer");
+    if (!frosted) return;
+
+    if (!enable) {
+      frosted.style.opacity = "0";
+      const heroReset = document.getElementById("banner-overlay-container");
+      if (heroReset) heroReset.style.transform = "";
+      return;
+    }
+
+    const vh = window.innerHeight || 1;
+    const y = window.scrollY || 0;
+    // 毛玻璃在滚过 30% 视口后渐入，60% 处完全生效
+    const fade = Math.min(1, Math.max(0, (y - vh * 0.3) / (vh * 0.3)));
+    frosted.style.opacity = fade.toFixed(3);
+    // Hero 文案随滚动上移（sticky 壁纸固定，文字模拟正常滚出视口）
+    const hero = document.getElementById("banner-overlay-container");
+    if (hero) hero.style.transform = `translateY(${-y}px)`;
+  }
+
+  window.addEventListener("scroll", updateHomeScrollFx, { passive: true });
 
   // 根据当前页面实际可见的顶部组件与滚动位置，动态更新侧边栏 sticky 间距
   function updateSidebarStickySpacing() {
