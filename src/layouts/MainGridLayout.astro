@@ -646,20 +646,23 @@ const hasMultipleImages =
         {showBannerDim && <div class="banner-dim-overlay absolute inset-0" style={`background: rgba(0, 0, 0, ${dimOpacity})`}></div>}
     </div>
 
+    <!-- 官网首页左对齐构图的可读性渐变遮罩：随壁纸常驻（不随 Hero 文案移出，避免滚动时露出亮度断层），
+         透明度由运行时脚本按页面与滚动位置驱动；非首页由服务端预置透明避免首帧闪烁 -->
+    {heroIsLeft && isBackgroundEnabled && (
+        <div id="hero-left-scrim" class="hero-left-scrim pointer-events-none absolute inset-x-0 bottom-0 h-[62%]" style={isHomePageCheck ? undefined : "opacity: 0;"}></div>
+    )}
+
     <div id="banner-overlay-container" class="absolute inset-0 z-20 pointer-events-none transition-swup-fade">    <!-- Home page text overlay - 始终渲染以便切换模式时控制显示 -->
     {homeTextEnable && (
         <div class:list={[
             "banner-home-text-overlay absolute inset-0 z-20 flex",
-            heroIsLeft ? "hero-layout-left items-end" : "items-center justify-center",
+            heroIsLeft ? "hero-layout-left items-center" : "items-center justify-center",
             !showHomeText ? "hidden" : "",
         ]}>
             {heroIsLeft ? (
                 <>
-                    <!-- 左下可读性渐变遮罩（随机壁纸/视频下保证文字可读） -->
-                    <div class="hero-left-scrim pointer-events-none absolute inset-x-0 bottom-0 h-[62%]"></div>
-
                     <!-- 左对齐大标题构图 -->
-                    <div class="hero-content relative mx-auto w-full max-w-(--page-width) px-6 pb-[15vh] pt-24 md:px-12 md:pb-[14vh]">
+                    <div class="hero-content relative mx-auto w-full max-w-(--page-width) px-6 py-8 md:px-12">
                         <div class="max-w-[44rem] text-left">
                             {backgroundWallpaper.common?.homeText?.title && (
                                 <div class="banner-title hero-title font-bold text-white mb-3 lg:mb-4 leading-[1.15]" style={{ "--banner-title-size": heroTitleSize }}>
@@ -1102,10 +1105,11 @@ const hasMultipleImages =
   }
 
   /* ===== 官网首页 Hero 左对齐构图 ===== */
-  /* 覆盖主题在 ≥481px 对 overlay 直接子元素的限宽/居中规则（原为居中构图服务） */
+  /* 覆盖主题在 ≥481px 对 overlay 直接子元素的限宽/居中规则（原为居中构图服务）；
+     构图为左对齐 + 垂直居中 */
   @media (min-width: 481px) {
     .banner-home-text-overlay.hero-layout-left {
-      align-items: flex-end !important;
+      align-items: center !important;
       justify-content: flex-start !important;
       text-align: left !important;
     }

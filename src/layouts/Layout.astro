@@ -1714,11 +1714,14 @@ function disableAnimation() {
 
     document.body.classList.toggle("home-wallpaper-fixed", enable);
 
+    // 可读性渐变遮罩：随壁纸常驻（元素跨页持久），按页面与滚动位置调透明度
+    const scrim = document.getElementById("hero-left-scrim");
     const frosted = document.getElementById("home-frosted-layer");
     if (!frosted) return;
 
     if (!enable) {
       frosted.style.opacity = "0";
+      if (scrim) scrim.style.opacity = isHome ? "1" : "0";
       const heroReset = document.getElementById("banner-overlay-container");
       if (heroReset) heroReset.style.transform = "";
       return;
@@ -1729,6 +1732,8 @@ function disableAnimation() {
     // 毛玻璃在滚过 30% 视口后渐入，60% 处完全生效
     const fade = Math.min(1, Math.max(0, (y - vh * 0.3) / (vh * 0.3)));
     frosted.style.opacity = fade.toFixed(3);
+    // 遮罩随毛玻璃渐入而减淡，避免底部过度压暗
+    if (scrim) scrim.style.opacity = (1 - fade * 0.5).toFixed(3);
     // Hero 文案随滚动上移（sticky 壁纸固定，文字模拟正常滚出视口）
     const hero = document.getElementById("banner-overlay-container");
     if (hero) hero.style.transform = `translateY(${-y}px)`;
