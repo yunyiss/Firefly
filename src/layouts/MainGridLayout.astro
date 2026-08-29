@@ -194,8 +194,9 @@ const showBannerPageTitle =
 	!isHomePageCheck &&
 	!isPostPage &&
 	!!title;
-// 手机端非首页不显示banner的CSS类
-const mobileNonHomeBannerClass = !isHomePageCheck ? "mobile-hide-banner" : "";
+// 手机端非首页不显示banner的CSS类（全屏模式壁纸常驻做毛玻璃背景，移动端与桌面端一致，不再隐藏）
+const mobileNonHomeBannerClass =
+	!isHomePageCheck && !isFullscreenMode ? "mobile-hide-banner" : "";
 
 // 计算主内容区域位置，考虑手机端非首页时banner被隐藏
 const mainPanelTop =
