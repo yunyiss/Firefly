@@ -45,6 +45,16 @@ export const homeConfig: HomeConfig = {
 		enable: true,
 	},
 
+	// 主页公告横条卡（内容请在 announcementConfig 中配置）
+	announcement: {
+		enable: true,
+	},
+
+	// 主页音乐播放卡（与导航栏播放器共用状态；歌单在 musicConfig 中配置）
+	music: {
+		enable: true,
+	},
+
 	// 内容板块入口卡片
 	sectionCards: {
 		enable: true,

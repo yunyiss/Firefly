@@ -32,7 +32,7 @@ const weekText = $derived(WEEKDAYS[now.getDay()]);
 </script>
 
 <!-- 去容器化的时钟排版：大号数字时间直接排在壁纸上 -->
-<div class:list={["flex flex-col justify-end", className]}>
+<div class="flex flex-col justify-end {className ?? ''}">
 	<div
 		class="text-5xl font-bold tabular-nums tracking-tight text-white md:text-6xl [text-shadow:0_4px_24px_rgba(0,0,0,0.6)]"
 	>

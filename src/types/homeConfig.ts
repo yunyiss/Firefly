@@ -80,6 +80,16 @@ export interface HomeClockConfig {
 	enable: boolean;
 }
 
+/** 主页公告横条卡配置（内容沿用 announcementConfig） */
+export interface HomeAnnouncementConfig {
+	enable: boolean;
+}
+
+/** 主页音乐播放卡配置（与导航栏播放器共用全局状态） */
+export interface HomeMusicConfig {
+	enable: boolean;
+}
+
 /** 最新文章板块配置 */
 export interface HomeLatestPostsConfig {
 	enable: boolean;
@@ -104,6 +114,10 @@ export interface HomeConfig {
 	hero: HomeHeroConfig;
 	/** 实时时钟卡 */
 	clock: HomeClockConfig;
+	/** 主页公告横条卡 */
+	announcement: HomeAnnouncementConfig;
+	/** 主页音乐播放卡 */
+	music: HomeMusicConfig;
 	/** 板块入口卡片 */
 	sectionCards: HomeSectionCardsConfig;
 	/** 统计卡 */

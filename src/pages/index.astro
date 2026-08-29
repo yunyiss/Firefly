@@ -1,9 +1,11 @@
 ---
 import { Icon } from "astro-icon/components";
 import PostPage from "@/components/layout/PostPage.astro";
+import HomeAnnouncement from "@/components/pages/home/HomeAnnouncement.astro";
 import HomeClock from "@/components/pages/home/HomeClock.svelte";
 import HomeExplore from "@/components/pages/home/HomeExplore.astro";
 import HomeLatestPosts from "@/components/pages/home/HomeLatestPosts.astro";
+import HomeMusic from "@/components/pages/home/HomeMusic.svelte";
 import HomeStats from "@/components/pages/home/HomeStats.astro";
 import { homeConfig, siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
@@ -37,6 +39,7 @@ const showStatsRow =
   {
     homeEnabled ? (
       <div id="home-sections" class="flex flex-col gap-10 md:gap-14">
+        {homeConfig.announcement.enable && <HomeAnnouncement />}
         {showStatsRow && (
           <div class="reveal-section flex flex-wrap items-end justify-between gap-x-10 gap-y-8">
             {homeConfig.clock.enable && <HomeClock client:load />}
@@ -44,6 +47,7 @@ const showStatsRow =
           </div>
         )}
         {homeConfig.sectionCards.enable && <HomeExplore class="reveal-section" />}
+        {homeConfig.music.enable && <HomeMusic client:load class="reveal-section" />}
         {homeConfig.latestPosts.enable && <HomeLatestPosts class="reveal-section" />}
       </div>
     ) : (

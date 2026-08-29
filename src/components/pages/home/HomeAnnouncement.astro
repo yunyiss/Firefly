@@ -1,0 +1,99 @@
+---
+import { Icon } from "astro-icon/components";
+import { announcementConfig, homeConfig } from "@/config";
+import { url } from "@/utils/url-utils";
+
+interface Props {
+	class?: string;
+	style?: string;
+}
+
+const { class: className, style } = Astro.props;
+
+const config = announcementConfig;
+// 关闭记忆：按内容记忆，内容更新后公告会重新出现
+const dismissKey = "home-announcement-dismissed";
+---
+
+{
+  homeConfig.announcement?.enable && config.content && (
+    <div
+      id="home-announcement"
+      class:list={[
+        "card-base reveal-section flex items-center gap-3 rounded-(--radius-large) px-4 py-3 md:gap-4 md:px-5",
+        className,
+      ]}
+      style={style}
+      data-content={config.content}
+      role="status"
+    >
+      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--btn-plain-bg-hover) text-(--primary)">
+        <Icon is:inline name="material-symbols:notifications-rounded" class="h-4.5 w-4.5" aria-hidden="true" />
+      </div>
+      <div class="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden">
+        <span class="shrink-0 rounded-md bg-(--btn-plain-bg-hover) px-2 py-0.5 text-xs font-bold text-(--primary)">
+          {config.title}
+        </span>
+        <p class="truncate text-sm text-black/75 dark:text-white/75">{config.content}</p>
+      </div>
+      {config.link?.enable && (
+        <a
+          href={config.link.external ? config.link.url : url(config.link.url)}
+          target={config.link.external ? "_blank" : undefined}
+          rel={config.link.external ? "noopener noreferrer" : undefined}
+          class="group hidden shrink-0 items-center gap-1 text-sm font-medium text-black/60 transition-colors duration-150 hover:text-(--primary) dark:text-white/60 sm:flex"
+        >
+          {config.link.text}
+          <Icon
+            is:inline
+            name="material-symbols:chevron-right-rounded"
+            class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+            aria-hidden="true"
+          />
+        </a>
+      )}
+      {config.closable && (
+        <button
+          type="button"
+          id="home-announcement-close"
+          aria-label="关闭公告"
+          class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-black/40 transition-colors duration-150 hover:bg-(--btn-plain-bg-hover) hover:text-black/70 dark:text-white/40 dark:hover:text-white/70"
+        >
+          <Icon is:inline name="material-symbols:close-rounded" class="h-4 w-4" aria-hidden="true" />
+        </button>
+      )}
+    </div>
+  )
+}
+
+<script>
+  // 公告关闭：按内容记忆（localStorage），内容更新后自动重新显示。
+  // 放在组件脚本里随页面执行；非首页或关闭态直接隐藏容器，避免闪烁后消失。
+  (function () {
+    const KEY = "home-announcement-dismissed";
+    const el = document.getElementById("home-announcement");
+    if (!el) return;
+    const content = el.getAttribute("data-content") || "";
+    let dismissed = false;
+    try {
+      dismissed = localStorage.getItem(KEY) === content;
+    } catch (e) {
+      dismissed = false;
+    }
+    if (dismissed) {
+      el.style.display = "none";
+      return;
+    }
+    const closeBtn = document.getElementById("home-announcement-close");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        el.style.display = "none";
+        try {
+          localStorage.setItem(KEY, content);
+        } catch (e) {
+          /* 隐私模式等场景忽略 */
+        }
+      });
+    }
+  })();
+</script>
