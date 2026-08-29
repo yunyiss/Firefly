@@ -1,11 +1,13 @@
 ---
 import { Icon } from "astro-icon/components";
-import PostCard from "@/components/layout/PostCard.astro";
+import CoverImage from "@/components/common/CoverImage.astro";
 import { homeConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
 import { getSortedPosts } from "@/utils/content-utils";
-import { getPostUrlBySlug, url } from "@/utils/url-utils";
+import { formatDateToYYYYMMDD } from "@/utils/date-utils";
+import { getApiUrlList, processCoverImageSync } from "@/utils/image-utils";
+import { getFileDirFromPath, getPostUrlBySlug, url } from "@/utils/url-utils";
 
 interface Props {
 	class?: string;
@@ -17,22 +19,34 @@ const { class: className, style } = Astro.props;
 const sectionTitle = homeConfig.latestPosts.title ?? i18n(I18nKey.recentPosts);
 
 const allPosts = await getSortedPosts();
-const latestPosts = allPosts.slice(0, homeConfig.latestPosts.count || 4);
+const latestPosts = allPosts
+	.slice(0, homeConfig.latestPosts.count || 4)
+	.map((entry) => ({
+		entry,
+		title: entry.data.title,
+		url: getPostUrlBySlug(entry.id),
+		date: formatDateToYYYYMMDD(entry.data.published),
+		category: entry.data.category,
+		tags: (entry.data.tags ?? []).slice(0, 2),
+		cover: processCoverImageSync(entry.data.image, entry.id),
+		coverBasePath: getFileDirFromPath(entry.filePath || ""),
+		coverApiUrls: getApiUrlList(entry.data.image, entry.id),
+		password: !!entry.data.password,
+	}));
+
+const showCover = homeConfig.latestPosts.showCover !== false;
 ---
 
-<section
-  class:list={["card-base rounded-(--radius-large) p-4 md:p-6 onload-animation", className]}
-  style={style}
-  aria-label={sectionTitle}
->
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-xl md:text-2xl font-bold text-black/90 dark:text-white/90">
+<!-- 去容器化的最新文章：杂志式列表，大标题 + 日期 + 小封面，细分隔线分行 -->
+<div class:list={["flex flex-col", className]} style={style} aria-label={sectionTitle}>
+  <div class="mb-2 flex items-baseline justify-between">
+    <h2 class="home-serif-title flex items-baseline gap-3 text-2xl font-bold text-white md:text-3xl [text-shadow:0_3px_18px_rgba(0,0,0,0.5)]">
+      <span class="font-mono text-sm font-bold text-white/45">02</span>
       {sectionTitle}
     </h2>
     <a
       href={url("/posts/")}
-      class="group flex items-center gap-1 text-sm font-medium text-black/60 dark:text-white/60
-             hover:text-(--primary) transition-colors duration-150"
+      class="group flex items-center gap-1 text-sm font-medium text-white/60 transition-colors duration-150 hover:text-(--primary) [text-shadow:0_2px_10px_rgba(0,0,0,0.45)]"
     >
       {homeConfig.latestPosts.moreText}
       <Icon
@@ -44,62 +58,48 @@ const latestPosts = allPosts.slice(0, homeConfig.latestPosts.count || 4);
     </a>
   </div>
 
-  <div class="home-post-grid grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div class="flex flex-col">
     {
-      latestPosts.map((entry, index) => (
-        <PostCard
-          entry={entry}
-          title={entry.data.title}
-          tags={entry.data.tags}
-          category={entry.data.category}
-          published={entry.data.published}
-          updated={entry.data.updated}
-          url={getPostUrlBySlug(entry.id)}
-          image={entry.data.image}
-          description={entry.data.description}
-          draft={entry.data.draft}
-          pinned={entry.data.pinned}
-          password={!!entry.data.password}
-          loading={index < 2 ? "eager" : "lazy"}
-          class:list="onload-animation post-card-item"
-          style={`animation-delay: calc(var(--content-delay) + ${index * 50}ms);`}
-        />
+      latestPosts.map((post, index) => (
+        <a
+          href={post.url}
+          class="group grid grid-cols-[auto_1fr_auto] items-center gap-4 border-b border-white/10 py-5 transition-colors duration-200 first:border-t hover:border-white/25 md:gap-7"
+          aria-label={post.title}
+        >
+          <span class="font-mono text-xs text-white/35">
+            {String(index + 1).padStart(2, "0")}
+          </span>
+          <div class="min-w-0">
+            <h3 class="home-serif-title flex items-center gap-2 truncate text-lg font-bold text-white/90 transition-colors duration-200 group-hover:text-(--primary) md:text-2xl [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]">
+              <span class="truncate">{post.title}</span>
+              {post.password && (
+                <Icon
+                  is:inline
+                  name="material-symbols:lock-rounded"
+                  class="h-4 w-4 shrink-0 text-white/45"
+                  aria-hidden="true"
+                />
+              )}
+            </h3>
+            <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/50">
+              <span class="font-mono">{post.date}</span>
+              {post.category && <span class="text-white/40">·</span>}
+              {post.category && <span>{post.category}</span>}
+              {post.tags.slice(0, 2).map((tag) => <span class="text-white/40">#{tag}</span>)}
+            </div>
+          </div>
+          {showCover && post.cover && (
+            <CoverImage
+              src={post.cover}
+              basePath={post.coverBasePath}
+              apiUrls={post.coverApiUrls}
+              alt={post.title}
+              loading="lazy"
+              class="h-16 w-24 shrink-0 rounded-lg border border-white/10 opacity-85 transition-all duration-300 group-hover:opacity-100 md:h-20 md:w-32"
+            />
+          )}
+        </a>
       ))
     }
   </div>
-</section>
-
-<style>
-  /* 复用 PostCard，以竖版卡片呈现在双列网格中（对齐文章页 grid 模式的样式） */
-  .home-post-grid :global(.post-card-wrapper) {
-    flex-direction: column-reverse;
-  }
-
-  .home-post-grid :global(.post-card-image) {
-    width: 100% !important;
-    position: relative !important;
-    top: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    left: auto !important;
-    border-radius: var(--radius-large) var(--radius-large) 0 0 !important;
-  }
-
-  .home-post-grid :global(.post-card-content) {
-    width: 100% !important;
-    padding: 1rem !important;
-  }
-
-  .home-post-grid :global(.no-cover .post-card-content) {
-    padding-right: 1rem !important;
-  }
-
-  .home-post-grid :global(.post-card-title) {
-    font-size: 1.2rem !important;
-    line-height: 1.65rem !important;
-  }
-
-  .home-post-grid :global(.post-card-title::before) {
-    display: none !important;
-  }
-</style>
+</div>

@@ -85,6 +85,8 @@ export interface HomeLatestPostsConfig {
 	enable: boolean;
 	/** 展示文章数量，默认 4 */
 	count: number;
+	/** 杂志式列表是否显示小封面 */
+	showCover: boolean;
 	/** 板块标题，默认使用 i18n 的「最新文章」 */
 	title?: string;
 	/** 「查看全部」按钮文字 */

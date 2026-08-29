@@ -114,11 +114,13 @@ export const homeConfig: HomeConfig = {
 		showWords: true,
 	},
 
-	// 最新文章
+	// 最新文章（杂志式列表）
 	latestPosts: {
 		enable: true,
 		// 展示文章数量
 		count: 4,
+		// 是否显示小封面
+		showCover: true,
 		// 「查看全部」按钮文字
 		moreText: "查看全部",
 	},

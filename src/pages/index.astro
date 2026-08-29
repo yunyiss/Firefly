@@ -24,30 +24,27 @@ const fallbackLastPage = Math.max(1, Math.ceil(allBlogPosts.length / pageSize));
 
 // 首页隐藏侧边栏（官网风格全宽板块），侧栏仍会渲染并由运行时脚本隐藏以保证 Swup 一致性
 const hideSidebar = homeEnabled;
-const showBentoRow =
+const showStatsRow =
 	homeEnabled && (homeConfig.clock.enable || homeConfig.stats.enable);
 ---
+
+{/* 标记 JS 可用后板块才隐藏等待入场动画；无 JS 时保持可见 */}
+<script is:inline>
+	document.documentElement.classList.add("reveal-pending");
+</script>
 
 <MainGridLayout title={siteConfig.title} hideSidebar={hideSidebar}>
   {
     homeEnabled ? (
-      <div id="home-sections" class="flex flex-col gap-4">
-        {showBentoRow && (
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-5">
-            {homeConfig.clock.enable && (
-              <HomeClock client:load class="onload-animation md:col-span-2" />
-            )}
-            {homeConfig.stats.enable && (
-              <HomeStats class={homeConfig.clock.enable ? "md:col-span-3" : "md:col-span-5"} />
-            )}
+      <div id="home-sections" class="flex flex-col gap-10 md:gap-14">
+        {showStatsRow && (
+          <div class="reveal-section flex flex-wrap items-end justify-between gap-x-10 gap-y-8">
+            {homeConfig.clock.enable && <HomeClock client:load />}
+            {homeConfig.stats.enable && <HomeStats />}
           </div>
         )}
-        {homeConfig.sectionCards.enable && (
-          <HomeExplore style={`animation-delay: calc(var(--content-delay) + 50ms)`} />
-        )}
-        {homeConfig.latestPosts.enable && (
-          <HomeLatestPosts style={`animation-delay: calc(var(--content-delay) + 100ms)`} />
-        )}
+        {homeConfig.sectionCards.enable && <HomeExplore class="reveal-section" />}
+        {homeConfig.latestPosts.enable && <HomeLatestPosts class="reveal-section" />}
       </div>
     ) : (
       <>
@@ -94,3 +91,77 @@ const showBentoRow =
     )
   }
 </MainGridLayout>
+
+<script>
+  // 滚动入场动画：板块到达视口线时上浮淡入。
+  // 用滚动扫描而非 IntersectionObserver——瞬时跳滚（拖动滚动条/End 键）时
+  // 元素可能从未与视口相交，Observer 会漏触发导致板块永远隐藏。
+  function sweepReveal() {
+    if (!document.documentElement.classList.contains("reveal-pending")) return;
+    const vh = window.innerHeight || 1;
+    document
+      .querySelectorAll<HTMLElement>(".reveal-section:not(.revealed)")
+      .forEach((el) => {
+        if (el.getBoundingClientRect().top < vh * 0.94) {
+          el.classList.add("revealed");
+        }
+      });
+  }
+
+  let revealTicking = false;
+  function onRevealScroll() {
+    if (revealTicking) return;
+    revealTicking = true;
+    requestAnimationFrame(() => {
+      revealTicking = false;
+      sweepReveal();
+    });
+  }
+
+  window.addEventListener("scroll", onRevealScroll, { passive: true });
+  window.addEventListener("resize", onRevealScroll, { passive: true });
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", sweepReveal);
+  } else {
+    sweepReveal();
+  }
+  document.addEventListener("swup:contentReplaced", () =>
+    setTimeout(sweepReveal, 60),
+  );
+</script>
+
+<style is:global>
+  /* 首页衬线标题（中文衬线，与 Hero 标题同一字体来源） */
+  .home-serif-title {
+    font-family:
+      var(--font-noto-serif-sc),
+      "Noto Serif SC",
+      "Songti SC",
+      "STSong",
+      "SimSun",
+      serif;
+  }
+
+  /* 滚动入场动画：初始态仅在 JS 可用（html.reveal-pending）时生效 */
+  html.reveal-pending .reveal-section {
+    opacity: 0;
+    transform: translateY(26px);
+    transition:
+      opacity 0.7s ease-out,
+      transform 0.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  html.reveal-pending .reveal-section.revealed {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html.reveal-pending .reveal-section {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+  }
+</style>

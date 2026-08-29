@@ -1,5 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
 import { homeConfig, siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
 import { i18n } from "@/i18n/translation";
@@ -42,58 +41,101 @@ const runningDays = Math.ceil(
 		(1000 * 60 * 60 * 24),
 );
 
+const daySuffix = i18n(I18nKey.siteStatsDays).replace("{days}", "").trim();
+
 const stats = [
 	{
-		icon: "material-symbols:article-outline",
 		label: i18n(I18nKey.siteStatsPostCount),
-		value: posts.length.toLocaleString(),
+		num: posts.length,
+		suffix: "",
 	},
 	{
-		icon: "material-symbols:folder-outline",
 		label: i18n(I18nKey.siteStatsCategoryCount),
-		value: categories.length.toLocaleString(),
+		num: categories.length,
+		suffix: "",
 	},
 	{
-		icon: "material-symbols:label-outline",
 		label: i18n(I18nKey.siteStatsTagCount),
-		value: tags.length.toLocaleString(),
+		num: tags.length,
+		suffix: "",
 	},
 	...(homeConfig.stats.showWords
 		? [
 				{
-					icon: "material-symbols:text-ad-outline-rounded",
 					label: i18n(I18nKey.siteStatsTotalWords),
-					value: totalWords.toLocaleString(),
+					num: totalWords,
+					suffix: "",
 				},
 			]
 		: []),
 	{
-		icon: "material-symbols:calendar-clock-outline",
 		label: i18n(I18nKey.siteStatsRunningDays),
-		value:
-			`${runningDays} ${i18n(I18nKey.siteStatsDays).replace("{days}", "")}`.trim(),
+		num: runningDays,
+		suffix: daySuffix,
 	},
 ];
 ---
 
-<section
-  class:list={["card-base rounded-(--radius-large) p-4 md:p-6 onload-animation", className]}
-  style={style}
-  aria-label={i18n(I18nKey.siteStats)}
->
-  <div class="grid h-full grid-cols-2 content-center gap-x-4 gap-y-5 md:grid-cols-3">
-    {
-      stats.map((stat) => (
-        <div class="flex items-center gap-3">
-          <div class="h-10 w-10 shrink-0 rounded-lg bg-(--btn-plain-bg-hover) flex items-center justify-center text-(--primary)">
-            <Icon is:inline name={stat.icon} class="h-5 w-5" aria-hidden="true" />
-          </div>
-          <div class="flex min-w-0 flex-col">
-            <span class="truncate text-lg font-bold leading-tight text-black/85 dark:text-white/85">{stat.value}</span>
-            <span class="text-xs text-black/50 dark:text-white/50">{stat.label}</span>
-          </div>
-        </div>
-      ))
-    }
-  </div>
-</section>
+<!-- 去容器化的统计排版：大号数字直接排在壁纸上 -->
+<div id="home-stats-strip" class:list={["flex flex-wrap items-end gap-x-10 gap-y-6", className]} style={style} aria-label={i18n(I18nKey.siteStats)}>
+  {
+    stats.map((stat) => (
+      <div class="flex flex-col">
+        <span class="text-3xl font-bold leading-none text-white tabular-nums [text-shadow:0_3px_18px_rgba(0,0,0,0.55)] md:text-4xl">
+          <span data-count={String(stat.num)}>{stat.num.toLocaleString()}</span>
+          {stat.suffix && <span class="ml-1 text-sm font-medium text-white/60">{stat.suffix}</span>}
+        </span>
+        <span class="mt-1.5 text-xs tracking-wide text-white/55">{stat.label}</span>
+      </div>
+    ))
+  }
+</div>
+
+<script>
+  // 统计数字进入视口后从 0 滚动增长（无 JS / 未触发时保持服务端渲染的最终值）
+  function animateStatNumbers(root: ParentNode) {
+    const els = root.querySelectorAll<HTMLElement>("[data-count]");
+    els.forEach((el) => {
+      const target = Number(el.dataset.count || "0");
+      if (!target || el.dataset.countBound) return;
+      el.dataset.countBound = "1";
+      const duration = 1300;
+      const start = performance.now();
+      const step = (t: number) => {
+        const p = Math.min(1, (t - start) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(target * eased).toLocaleString();
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    });
+  }
+
+  function initStatsCountUp() {
+    const root = document.getElementById("home-stats-strip");
+    if (!root || root.dataset.countInit) return;
+    root.dataset.countInit = "1";
+    if (!("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            animateStatNumbers(root);
+            io.disconnect();
+          }
+        }
+      },
+      { threshold: 0.3 },
+    );
+    io.observe(root);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initStatsCountUp);
+  } else {
+    initStatsCountUp();
+  }
+  document.addEventListener("swup:contentReplaced", () =>
+    setTimeout(initStatsCountUp, 50),
+  );
+</script>

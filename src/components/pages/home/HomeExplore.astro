@@ -10,7 +10,7 @@ interface Props {
 
 const { class: className, style } = Astro.props;
 
-// 按 siteConfig.pages 过滤被关闭页面的卡片
+// 按 siteConfig.pages 过滤被关闭页面的入口
 const pages = siteConfig.pages;
 const cards = homeConfig.sectionCards.cards.filter(
 	(card) =>
@@ -18,58 +18,53 @@ const cards = homeConfig.sectionCards.cards.filter(
 );
 ---
 
-<section
-  class:list={["card-base rounded-(--radius-large) p-4 md:p-6 onload-animation", className]}
-  style={style}
-  aria-label={homeConfig.sectionCards.title}
->
-  <div class="flex items-baseline gap-3 mb-4">
-    <h2 class="text-xl md:text-2xl font-bold text-black/90 dark:text-white/90">
+<!-- 去容器化的探索入口：细分隔线 + 小图标 + 名字 + 一句话，直接排在壁纸上 -->
+<div class:list={["flex flex-col", className]} style={style} aria-label={homeConfig.sectionCards.title}>
+  <div class="mb-6 flex items-baseline justify-between">
+    <h2 class="home-serif-title flex items-baseline gap-3 text-2xl font-bold text-white md:text-3xl [text-shadow:0_3px_18px_rgba(0,0,0,0.5)]">
+      <span class="font-mono text-sm font-bold text-white/45">01</span>
       {homeConfig.sectionCards.title}
     </h2>
     {
       homeConfig.sectionCards.subtitle && (
-        <p class="text-sm text-black/50 dark:text-white/50">
+        <p class="text-sm text-white/50 [text-shadow:0_2px_10px_rgba(0,0,0,0.45)]">
           {homeConfig.sectionCards.subtitle}
         </p>
       )
     }
   </div>
-  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+  <div class="grid grid-cols-2 gap-x-8 gap-y-7 md:grid-cols-4">
     {
       cards.map((card) => (
         <a
           href={card.external ? card.url : url(card.url)}
           target={card.external ? "_blank" : undefined}
           rel={card.external ? "noopener noreferrer" : undefined}
-          class="group relative flex flex-col gap-3 rounded-xl p-4 overflow-hidden
-                 bg-(--btn-plain-bg-hover) hover:bg-(--btn-card-bg-hover) active:scale-[0.97]
-                 transition-all duration-200 ease-out"
+          class="group border-t border-white/15 pt-4 transition-colors duration-300 hover:border-(--primary)"
         >
-          <div class="flex items-center justify-between">
-            <div class="h-10 w-10 rounded-lg bg-(--card-bg) flex items-center justify-center
-                        text-(--primary) transition-transform duration-200 group-hover:scale-110">
-              <Icon is:inline name={card.icon} class="h-5 w-5" aria-hidden="true" />
-            </div>
+          <Icon
+            is:inline
+            name={card.icon}
+            class="h-5 w-5 text-white/65 transition-colors duration-200 group-hover:text-(--primary)"
+            aria-hidden="true"
+          />
+          <div class="mt-2.5 flex items-center gap-1.5">
+            <span class="font-medium text-white/90 transition-colors duration-200 group-hover:text-(--primary) [text-shadow:0_2px_10px_rgba(0,0,0,0.45)]">
+              {card.name}
+            </span>
             <Icon
               is:inline
-              name="material-symbols:chevron-right-rounded"
-              class="h-5 w-5 text-black/30 dark:text-white/30
-                     opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0
-                     transition-all duration-200"
+              name="material-symbols:arrow-forward-rounded"
+              class="h-3.5 w-3.5 text-(--primary) opacity-0 -translate-x-1 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100"
               aria-hidden="true"
             />
           </div>
-          <div class="flex flex-col gap-0.5">
-            <span class="font-bold text-black/85 dark:text-white/85 transition-colors duration-150 group-hover:text-(--primary)">
-              {card.name}
-            </span>
-            <span class="text-xs md:text-sm text-black/50 dark:text-white/50 leading-snug">
-              {card.description}
-            </span>
-          </div>
+          <p class="mt-1 text-xs leading-snug text-white/50">
+            {card.description}
+          </p>
         </a>
       ))
     }
   </div>
-</section>
+</div>
