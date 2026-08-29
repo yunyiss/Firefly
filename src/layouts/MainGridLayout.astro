@@ -663,7 +663,7 @@ const hasMultipleImages =
             {heroIsLeft ? (
                 <>
                     <!-- 左对齐大标题构图 -->
-                    <div class="hero-content relative mx-auto w-full max-w-(--page-width) px-6 py-8 md:px-12">
+                    <div class="hero-content pointer-events-auto relative mx-auto w-full max-w-(--page-width) px-6 py-8 md:px-12">
                         <div class="max-w-[44rem] text-left">
                             {backgroundWallpaper.common?.homeText?.title && (
                                 <div class="banner-title hero-title font-bold text-white mb-3 lg:mb-4 leading-[1.15]" style={{ "--banner-title-size": heroTitleSize }}>
@@ -712,11 +712,11 @@ const hasMultipleImages =
                                         href={homeConfig.hero.jumpButton.external ? homeConfig.hero.jumpButton.url : url(homeConfig.hero.jumpButton.url)}
                                         target={homeConfig.hero.jumpButton.external ? "_blank" : undefined}
                                         rel={homeConfig.hero.jumpButton.external ? "noopener noreferrer" : undefined}
-                                        class="inline-flex items-center gap-1.5 rounded-full bg-(--primary) px-5 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95"
+                                        class="inline-flex items-center gap-2 rounded-full bg-(--primary) px-7 py-3 text-base font-medium text-white shadow-lg backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95"
                                     >
-                                        <Icon is:inline name="material-symbols:article" class="h-4.5 w-4.5" aria-hidden="true" />
+                                        <Icon is:inline name="material-symbols:article" class="h-5.5 w-5.5" aria-hidden="true" />
                                         {homeConfig.hero.jumpButton.name}
-                                        <Icon is:inline name="material-symbols:arrow-forward-rounded" class="h-4 w-4" aria-hidden="true" />
+                                        <Icon is:inline name="material-symbols:arrow-forward-rounded" class="h-5 w-5" aria-hidden="true" />
                                     </a>
                                 </div>
                             )}
