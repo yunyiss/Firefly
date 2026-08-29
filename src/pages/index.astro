@@ -6,6 +6,7 @@ import HomeClock from "@/components/pages/home/HomeClock.svelte";
 import HomeExplore from "@/components/pages/home/HomeExplore.astro";
 import HomeLatestPosts from "@/components/pages/home/HomeLatestPosts.astro";
 import HomeMusic from "@/components/pages/home/HomeMusic.svelte";
+import HomeProfile from "@/components/pages/home/HomeProfile.astro";
 import HomeStats from "@/components/pages/home/HomeStats.astro";
 import { homeConfig, siteConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
@@ -47,7 +48,12 @@ const showStatsRow =
           </div>
         )}
         {homeConfig.sectionCards.enable && <HomeExplore class="reveal-section" />}
-        {homeConfig.music.enable && <HomeMusic client:load class="reveal-section" />}
+        {(homeConfig.profile.enable || homeConfig.music.enable) && (
+          <div class="reveal-section grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {homeConfig.profile.enable && <HomeProfile />}
+            {homeConfig.music.enable && <HomeMusic client:load />}
+          </div>
+        )}
         {homeConfig.latestPosts.enable && <HomeLatestPosts class="reveal-section" />}
       </div>
     ) : (

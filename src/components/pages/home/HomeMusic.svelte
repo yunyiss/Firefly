@@ -92,14 +92,14 @@ function seek(e: MouseEvent) {
 
 <!-- 主页音乐播放卡：与导航栏播放器共用全局状态（window.__fireflyMusic） -->
 <div
-  class="card-base flex items-center gap-4 rounded-(--radius-large) p-4 md:gap-5 md:px-5 {className ?? ''}"
+  class="card-base flex items-center gap-5 rounded-(--radius-large) p-5 md:gap-6 md:p-6 {className ?? ''}"
   aria-label="音乐播放"
 >
   <!-- 旋转封面 -->
   <button
     type="button"
     onclick={togglePlay}
-    class="relative h-16 w-16 shrink-0 rounded-full border border-white/10 shadow-lg md:h-[4.5rem] md:w-[4.5rem]"
+    class="relative h-20 w-20 shrink-0 rounded-full border border-white/10 shadow-lg md:h-24 md:w-24"
     aria-label={isPlaying ? "暂停" : "播放"}
   >
     {#if track?.pic}
@@ -121,18 +121,18 @@ function seek(e: MouseEvent) {
   </button>
 
   <!-- 曲目信息 + 进度 -->
-  <div class="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
-    <div class="flex min-w-0 items-baseline gap-2">
-      <span class="truncate text-sm font-bold text-black/85 md:text-base dark:text-white/85">
+  <div class="flex min-w-0 flex-1 flex-col justify-center gap-2.5">
+    <div class="flex min-w-0 flex-col">
+      <span class="truncate text-base font-bold text-black/85 md:text-lg dark:text-white/85">
         {track?.name || "音乐播放"}
       </span>
-      <span class="truncate text-xs text-black/50 dark:text-white/50">
+      <span class="truncate text-xs text-black/50 dark:text-white/50 md:text-sm">
         {track?.artist || (initialized ? "闲置中" : "点我开启音乐")}
       </span>
     </div>
-    <div class="flex items-center gap-2.5">
+    <div class="flex items-center gap-3">
       <div
-        class="group h-1.5 flex-1 cursor-pointer overflow-hidden rounded-full bg-black/10 dark:bg-white/15"
+        class="group h-2 flex-1 cursor-pointer overflow-hidden rounded-full bg-black/10 dark:bg-white/15"
         onclick={seek}
         role="slider"
         aria-label="播放进度"
@@ -146,46 +146,45 @@ function seek(e: MouseEvent) {
         {currentTimeStr} / {durationStr}
       </span>
     </div>
-  </div>
-
-  <!-- 控制按钮 -->
-  <div class="flex shrink-0 items-center gap-1.5 md:gap-2.5">
-    <button
-      type="button"
-      onclick={playPrev}
-      aria-label="上一曲"
-      class="flex h-9 w-9 items-center justify-center rounded-full text-black/60 transition-colors duration-150 hover:bg-(--btn-plain-bg-hover) hover:text-(--primary) dark:text-white/60"
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" />
-      </svg>
-    </button>
-    <button
-      type="button"
-      onclick={togglePlay}
-      aria-label={isPlaying ? "暂停" : "播放"}
-      class="flex h-11 w-11 items-center justify-center rounded-full bg-(--primary) text-white shadow-lg transition-transform duration-150 hover:scale-105 active:scale-95"
-    >
-      {#if isPlaying}
+    <!-- 控制按钮 -->
+    <div class="mt-0.5 flex items-center justify-center gap-4">
+      <button
+        type="button"
+        onclick={playPrev}
+        aria-label="上一曲"
+        class="flex h-9 w-9 items-center justify-center rounded-full text-black/60 transition-colors duration-150 hover:bg-(--btn-plain-bg-hover) hover:text-(--primary) dark:text-white/60"
+      >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
+          <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" />
         </svg>
-      {:else}
+      </button>
+      <button
+        type="button"
+        onclick={togglePlay}
+        aria-label={isPlaying ? "暂停" : "播放"}
+        class="flex h-12 w-12 items-center justify-center rounded-full bg-(--primary) text-white shadow-lg transition-transform duration-150 hover:scale-105 active:scale-95"
+      >
+        {#if isPlaying}
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M6 5h4v14H6zm8 0h4v14h-4z" />
+          </svg>
+        {:else}
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+        {/if}
+      </button>
+      <button
+        type="button"
+        onclick={playNext}
+        aria-label="下一曲"
+        class="flex h-9 w-9 items-center justify-center rounded-full text-black/60 transition-colors duration-150 hover:bg-(--btn-plain-bg-hover) hover:text-(--primary) dark:text-white/60"
+      >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-          <path d="M8 5v14l11-7z" />
+          <path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z" />
         </svg>
-      {/if}
-    </button>
-    <button
-      type="button"
-      onclick={playNext}
-      aria-label="下一曲"
-      class="flex h-9 w-9 items-center justify-center rounded-full text-black/60 transition-colors duration-150 hover:bg-(--btn-plain-bg-hover) hover:text-(--primary) dark:text-white/60"
-    >
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z" />
-      </svg>
-    </button>
+      </button>
+    </div>
   </div>
 </div>
 

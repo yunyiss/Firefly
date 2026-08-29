@@ -90,6 +90,11 @@ export interface HomeMusicConfig {
 	enable: boolean;
 }
 
+/** 主页个人资料卡配置（与音乐卡并排；内容沿用 profileConfig） */
+export interface HomeProfileConfig {
+	enable: boolean;
+}
+
 /** 最新文章板块配置 */
 export interface HomeLatestPostsConfig {
 	enable: boolean;
@@ -118,6 +123,8 @@ export interface HomeConfig {
 	announcement: HomeAnnouncementConfig;
 	/** 主页音乐播放卡 */
 	music: HomeMusicConfig;
+	/** 主页个人资料卡（与音乐卡并排） */
+	profile: HomeProfileConfig;
 	/** 板块入口卡片 */
 	sectionCards: HomeSectionCardsConfig;
 	/** 统计卡 */

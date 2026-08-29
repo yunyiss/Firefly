@@ -27,6 +27,7 @@ export type {
 	HomeHeroTag,
 	HomeLatestPostsConfig,
 	HomeMusicConfig,
+	HomeProfileConfig,
 	HomeSectionCard,
 	HomeSectionCardsConfig,
 	HomeStatsConfig,

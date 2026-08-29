@@ -55,6 +55,11 @@ export const homeConfig: HomeConfig = {
 		enable: true,
 	},
 
+	// 主页个人资料卡（与音乐卡并排；内容请在 profileConfig 中配置）
+	profile: {
+		enable: true,
+	},
+
 	// 内容板块入口卡片
 	sectionCards: {
 		enable: true,
