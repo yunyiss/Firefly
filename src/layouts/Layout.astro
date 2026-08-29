@@ -1755,6 +1755,46 @@ function disableAnimation() {
   window.addEventListener("scroll", updateHomeScrollFx, { passive: true });
   window.addEventListener("resize", updateHomeScrollFx, { passive: true });
 
+  // ===== 首页板块滚动入场动画的扫描器（全局脚本） =====
+  // 扫描器必须放在每页都会执行的全局脚本里：若放在主页模块脚本中，
+  // 从其它页 Swup 导航回主页时模块脚本不会重新执行，监听缺失，
+  // 板块会因 reveal-pending 的隐藏初态永远停在 opacity 0。
+  function sweepReveal() {
+    if (!document.documentElement.classList.contains("reveal-pending")) return;
+    const vh = window.innerHeight || 1;
+    document
+      .querySelectorAll<HTMLElement>(".reveal-section:not(.revealed)")
+      .forEach((el) => {
+        if (el.getBoundingClientRect().top < vh * 0.94) {
+          el.classList.add("revealed");
+        }
+      });
+  }
+
+  let revealTicking = false;
+  function onRevealScroll() {
+    if (revealTicking) return;
+    revealTicking = true;
+    requestAnimationFrame(() => {
+      revealTicking = false;
+      sweepReveal();
+    });
+  }
+
+  window.addEventListener("scroll", onRevealScroll, { passive: true });
+  window.addEventListener("resize", onRevealScroll, { passive: true });
+  // Swup 切页进入主页后内容替换完成，扫描一次新渲染的板块
+  document.addEventListener("swup:contentReplaced", () =>
+    setTimeout(sweepReveal, 60),
+  );
+  setTimeout(sweepReveal, 300);
+  // 兜底校正时机：壁纸模式变更（initWallpaperMode 设置 data-wallpaper-mode 后派发）、
+  // 整页 load（浏览器滚动位置恢复完成后）。刷新时滚动恢复可能早于脚本就绪，
+  // 仅依赖 scroll 事件会让毛玻璃停留在透明态。
+  window.addEventListener("wallpaperModeChange", updateHomeScrollFx);
+  window.addEventListener("load", updateHomeScrollFx);
+  [300, 1000, 2500].forEach((delay) => setTimeout(updateHomeScrollFx, delay));
+
   // 根据当前页面实际可见的顶部组件与滚动位置，动态更新侧边栏 sticky 间距
   function updateSidebarStickySpacing() {
     const scrollTop = document.documentElement.scrollTop || window.scrollY || 0;

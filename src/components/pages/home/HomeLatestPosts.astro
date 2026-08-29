@@ -63,14 +63,14 @@ const showCover = homeConfig.latestPosts.showCover !== false;
       latestPosts.map((post, index) => (
         <a
           href={post.url}
-          class="group grid grid-cols-[auto_1fr_auto] items-center gap-4 border-b border-white/10 py-5 transition-colors duration-200 first:border-t hover:border-white/25 md:gap-7"
+          class="group grid grid-cols-[auto_1fr_auto] items-center gap-3 border-b border-white/10 py-4 transition-colors duration-200 first:border-t hover:border-white/25 md:gap-7 md:py-5"
           aria-label={post.title}
         >
-          <span class="font-mono text-xs text-white/35">
+          <span class="hidden font-mono text-xs text-white/35 md:block">
             {String(index + 1).padStart(2, "0")}
           </span>
           <div class="min-w-0">
-            <h3 class="home-serif-title flex items-center gap-2 truncate text-lg font-bold text-white/90 transition-colors duration-200 group-hover:text-(--primary) md:text-2xl [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]">
+            <h3 class="home-serif-title flex items-center gap-2 truncate text-base font-bold text-white/90 transition-colors duration-200 group-hover:text-(--primary) md:text-2xl [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]">
               <span class="truncate">{post.title}</span>
               {post.password && (
                 <Icon
@@ -81,7 +81,7 @@ const showCover = homeConfig.latestPosts.showCover !== false;
                 />
               )}
             </h3>
-            <div class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/50">
+            <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-white/50 md:mt-2 md:text-xs">
               <span class="font-mono">{post.date}</span>
               {post.category && <span class="text-white/40">·</span>}
               {post.category && <span>{post.category}</span>}
@@ -95,7 +95,7 @@ const showCover = homeConfig.latestPosts.showCover !== false;
               apiUrls={post.coverApiUrls}
               alt={post.title}
               loading="lazy"
-              class="h-16 w-24 shrink-0 rounded-lg border border-white/10 opacity-85 transition-all duration-300 group-hover:opacity-100 md:h-20 md:w-32"
+              class="h-14 w-20 min-h-14! shrink-0 rounded-lg border border-white/10 opacity-85 transition-all duration-300 group-hover:opacity-100 md:h-20 md:w-32 md:min-h-20!"
             />
           )}
         </a>

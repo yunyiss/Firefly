@@ -92,44 +92,8 @@ const showStatsRow =
   }
 </MainGridLayout>
 
-<script>
-  // 滚动入场动画：板块到达视口线时上浮淡入。
-  // 用滚动扫描而非 IntersectionObserver——瞬时跳滚（拖动滚动条/End 键）时
-  // 元素可能从未与视口相交，Observer 会漏触发导致板块永远隐藏。
-  function sweepReveal() {
-    if (!document.documentElement.classList.contains("reveal-pending")) return;
-    const vh = window.innerHeight || 1;
-    document
-      .querySelectorAll<HTMLElement>(".reveal-section:not(.revealed)")
-      .forEach((el) => {
-        if (el.getBoundingClientRect().top < vh * 0.94) {
-          el.classList.add("revealed");
-        }
-      });
-  }
-
-  let revealTicking = false;
-  function onRevealScroll() {
-    if (revealTicking) return;
-    revealTicking = true;
-    requestAnimationFrame(() => {
-      revealTicking = false;
-      sweepReveal();
-    });
-  }
-
-  window.addEventListener("scroll", onRevealScroll, { passive: true });
-  window.addEventListener("resize", onRevealScroll, { passive: true });
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", sweepReveal);
-  } else {
-    sweepReveal();
-  }
-  document.addEventListener("swup:contentReplaced", () =>
-    setTimeout(sweepReveal, 60),
-  );
-</script>
+<!-- 滚动入场动画的扫描器在 Layout.astro 全局脚本中（reveal-pending 标记 + .reveal-section 隐藏态见下方样式）；
+     扫描器不能放在本页模块脚本里——Swup 导航进入本页时页面模块脚本不会重新执行，监听会缺失 -->
 
 <style is:global>
   /* 首页衬线标题（中文衬线，与 Hero 标题同一字体来源） */

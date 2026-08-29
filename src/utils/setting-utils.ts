@@ -490,7 +490,6 @@ function showBannerMode(animate = false) {
 function showFullscreenMode(animate = false) {
 	// 显示 wallpaper-wrapper 并切换为全屏壁纸模式
 	const wallpaperWrapper = document.getElementById("wallpaper-wrapper");
-	const isMobile = window.innerWidth < 1024;
 	const isHomePage = checkIsHomePage(window.location.pathname);
 	if (wallpaperWrapper) {
 		// 移除 overlay 模式类
@@ -498,22 +497,17 @@ function showFullscreenMode(animate = false) {
 		// 添加全屏壁纸模式类
 		wallpaperWrapper.classList.add("wallpaper-fullscreen");
 
-		if (isMobile && !isHomePage) {
-			// 移动端非首页时隐藏壁纸
-			wallpaperWrapper.style.display = "none";
-			wallpaperWrapper.classList.add("mobile-hide-banner");
-		} else {
-			// 显示壁纸
-			wallpaperWrapper.style.display = "block";
-			wallpaperWrapper.style.setProperty("display", "block", "important");
-			wallpaperWrapper.style.top = "";
-			requestAnimationFrame(() => {
-				wallpaperWrapper.classList.remove("hidden");
-				wallpaperWrapper.classList.remove("opacity-0");
-				wallpaperWrapper.classList.add("opacity-100");
-				wallpaperWrapper.classList.remove("mobile-hide-banner");
-			});
-		}
+		// 全屏模式壁纸常驻做毛玻璃背景，移动端与桌面端一致（不再按页面隐藏）
+		// 显示壁纸
+		wallpaperWrapper.style.display = "block";
+		wallpaperWrapper.style.setProperty("display", "block", "important");
+		wallpaperWrapper.style.top = "";
+		requestAnimationFrame(() => {
+			wallpaperWrapper.classList.remove("hidden");
+			wallpaperWrapper.classList.remove("opacity-0");
+			wallpaperWrapper.classList.add("opacity-100");
+			wallpaperWrapper.classList.remove("mobile-hide-banner");
+		});
 	}
 
 	// 显示横幅首页文本（如果启用且是首页）
@@ -731,20 +725,7 @@ function adjustMainContentPosition(
 		}
 		case "fullscreen": {
 			// 全屏壁纸模式：壁纸已在文档流中占100vh，主内容紧跟其后
-			const isFullscreenMobile = window.innerWidth < 1024;
-			const isFullscreenHome = checkIsHomePage(window.location.pathname);
-			if (isFullscreenMobile && !isFullscreenHome) {
-				// 移动端非首页：壁纸已隐藏，主内容从导航栏下方开始
-				mainContent.classList.add("mobile-main-no-banner");
-				mainContent.classList.add("no-banner-layout");
-				mainContent.style.setProperty("top", "5.5rem", "important");
-				mainContent.style.setProperty("margin-top", "0", "important");
-				mainContent.style.position = "";
-				mainContent.style.minHeight = "";
-				mainContent.style.transition = "";
-				break;
-			}
-
+			// 移动端与桌面端一致（壁纸常驻做毛玻璃背景，不再按页面隐藏）
 			if (animate) {
 				// 运行时切换：从当前位置动画滑到壁纸下方，完成后切换为 relative
 				const computedTop = mainContent.getBoundingClientRect().top;
