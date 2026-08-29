@@ -1164,15 +1164,15 @@ const hasMultipleImages =
     }
   }
 
-  /* ===== 官网首页常驻壁纸 + 滚动毛玻璃 ===== */
-  /* 首页（全屏壁纸模式）壁纸 sticky 常驻：不脱离文档流（内容位置不变），滚动时固定在视口做背景 */
-  body.home-wallpaper-fixed #wallpaper-wrapper.wallpaper-fullscreen {
+  /* ===== 全站常驻壁纸 + 滚动毛玻璃 ===== */
+  /* 全屏壁纸模式（桌面端由脚本按页控制开关）壁纸 sticky 常驻：不脱离文档流（内容位置不变），滚动时固定在视口做背景 */
+  body.wallpaper-pinned #wallpaper-wrapper.wallpaper-fullscreen {
     position: sticky !important;
     top: 0 !important;
   }
 
-  /* 常驻壁纸上，首页卡片使用半透明底色（与 overlay 模式同一变量） */
-  body.home-wallpaper-fixed .card-base {
+  /* 常驻壁纸上，卡片使用半透明底色（与 overlay 模式同一变量） */
+  body.wallpaper-pinned .card-base {
     background-color: var(--card-bg-transparent) !important;
   }
 
