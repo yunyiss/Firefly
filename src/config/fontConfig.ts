@@ -63,16 +63,6 @@ export const fontsList: FontDefinition[] = [
 			"monospace",
 		],
 	},
-	{
-		// 中文衬线字体：用于 Hero 大标题与首页板块标题的文人气质
-		name: "Noto Serif SC",
-		cssVariable: "--font-noto-serif-sc",
-		provider: "fontsource",
-		weights: ["400", "600", "700", "900"],
-		styles: ["normal"],
-		subsets: ["latin"],
-		fallbacks: ["Songti SC", "STSong", "SimSun", "serif"],
-	},
 	// ─── 本地字体示例 ───
 	// 使用步骤：
 	// 1. 将 TTF/OTF/WOFF2 字体文件放在 public/assets/fonts/ 目录下
@@ -104,7 +94,7 @@ export const fontConfig: FontSelectionConfig = {
 	// 各区域独立字体设置（填写上方 fonts 中的 cssVariable，留空则使用全局 selected 字体）
 	// 例如：bannerTitleFont: "--font-inter", 表示主页横幅主标题使用 Inter 字体
 	// 主页横幅主标题字体（中文衬线，文人气质）
-	bannerTitleFont: "--font-noto-serif-sc",
+	bannerTitleFont: "--font-zen-maru-gothic",
 	// 主页横幅副标题字体
 	bannerSubtitleFont: "--font-inter",
 	// 导航栏标题字体
@@ -118,11 +108,6 @@ export const fontConfig: FontSelectionConfig = {
 		"--font-greatvibes": {
 			// 额外包含的字符
 			extraChars: "",
-		},
-		"--font-noto-serif-sc": {
-			// 额外包含的字符（补齐标题常用字，避免子集缺字）
-			extraChars:
-				"探索拾光最新文章虚数之树技术笔记与折腾记录碎念常逛优质站点来聊两句吧站在树下的人看全部",
 		},
 	},
 };

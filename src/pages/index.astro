@@ -106,17 +106,6 @@ const showStatsRow =
      扫描器不能放在本页模块脚本里——Swup 导航进入本页时页面模块脚本不会重新执行，监听会缺失 -->
 
 <style is:global>
-  /* 首页衬线标题（中文衬线，与 Hero 标题同一字体来源） */
-  .home-serif-title {
-    font-family:
-      var(--font-noto-serif-sc),
-      "Noto Serif SC",
-      "Songti SC",
-      "STSong",
-      "SimSun",
-      serif;
-  }
-
   /* 滚动入场动画：初始态仅在 JS 可用（html.reveal-pending）时生效 */
   html.reveal-pending .reveal-section {
     opacity: 0;

@@ -38,6 +38,12 @@ export const homeConfig: HomeConfig = {
 			title: "未白 ?",
 			text: "WELCOME TO MY BLOG, ENJOY YOUR STAY!",
 		},
+		// 标签下方的快捷跳转按钮（不需要时把 enable 设为 false）
+		jumpButton: {
+			enable: true,
+			name: "访问文章",
+			url: "/posts/",
+		},
 	},
 
 	// 实时时钟卡

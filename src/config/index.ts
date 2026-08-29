@@ -24,6 +24,7 @@ export type {
 	HomeConfig,
 	HomeHeroBadge,
 	HomeHeroConfig,
+	HomeHeroJumpButton,
 	HomeHeroTag,
 	HomeLatestPostsConfig,
 	HomeMusicConfig,

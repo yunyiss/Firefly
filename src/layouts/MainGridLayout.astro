@@ -706,6 +706,20 @@ const hasMultipleImages =
                                     )}
                                 </div>
                             )}
+                            {homeConfig.hero?.jumpButton?.enable !== false && homeConfig.hero?.jumpButton && (
+                                <div class="mt-5">
+                                    <a
+                                        href={homeConfig.hero.jumpButton.external ? homeConfig.hero.jumpButton.url : url(homeConfig.hero.jumpButton.url)}
+                                        target={homeConfig.hero.jumpButton.external ? "_blank" : undefined}
+                                        rel={homeConfig.hero.jumpButton.external ? "noopener noreferrer" : undefined}
+                                        class="inline-flex items-center gap-1.5 rounded-full bg-(--primary) px-5 py-2 text-sm font-medium text-white shadow-lg backdrop-blur-sm transition-all duration-200 hover:scale-105 active:scale-95"
+                                    >
+                                        <Icon is:inline name="material-symbols:article" class="h-4.5 w-4.5" aria-hidden="true" />
+                                        {homeConfig.hero.jumpButton.name}
+                                        <Icon is:inline name="material-symbols:arrow-forward-rounded" class="h-4 w-4" aria-hidden="true" />
+                                    </a>
+                                </div>
+                            )}
                         </div>
                     </div>
 

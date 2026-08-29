@@ -37,6 +37,19 @@ export interface HomeHeroConfig {
 	verticalText?: string;
 	/** 右下角斜置欢迎玻璃卡（左对齐构图） */
 	badge: HomeHeroBadge;
+	/** 标签下方的快捷跳转按钮（左对齐构图） */
+	jumpButton?: HomeHeroJumpButton;
+}
+
+/** Hero 快捷跳转按钮 */
+export interface HomeHeroJumpButton {
+	enable?: boolean;
+	/** 按钮文字 */
+	name: string;
+	/** 链接地址 */
+	url: string;
+	/** 是否外部链接（新窗口打开） */
+	external?: boolean;
 }
 
 /** 板块入口卡片 */
