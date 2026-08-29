@@ -92,14 +92,14 @@ function seek(e: MouseEvent) {
 
 <!-- 主页音乐播放卡：与导航栏播放器共用全局状态（window.__fireflyMusic） -->
 <div
-  class="card-base flex items-center gap-5 rounded-(--radius-large) p-5 md:gap-6 md:p-6 {className ?? ''}"
+  class="card-base flex items-center gap-4 rounded-(--radius-large) p-4 md:gap-5 md:p-5 {className ?? ''}"
   aria-label="音乐播放"
 >
   <!-- 旋转封面 -->
   <button
     type="button"
     onclick={togglePlay}
-    class="relative h-20 w-20 shrink-0 rounded-full border border-white/10 shadow-lg md:h-24 md:w-24"
+    class="relative h-16 w-16 shrink-0 rounded-full border border-white/10 shadow-lg md:h-20 md:w-20"
     aria-label={isPlaying ? "暂停" : "播放"}
   >
     {#if track?.pic}
@@ -121,7 +121,7 @@ function seek(e: MouseEvent) {
   </button>
 
   <!-- 曲目信息 + 进度 -->
-  <div class="flex min-w-0 flex-1 flex-col justify-center gap-2.5">
+  <div class="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
     <div class="flex min-w-0 flex-col">
       <span class="truncate text-base font-bold text-black/85 md:text-lg dark:text-white/85">
         {track?.name || "音乐播放"}
@@ -152,7 +152,7 @@ function seek(e: MouseEvent) {
         type="button"
         onclick={playPrev}
         aria-label="上一曲"
-        class="flex h-9 w-9 items-center justify-center rounded-full text-black/60 transition-colors duration-150 hover:bg-(--btn-plain-bg-hover) hover:text-(--primary) dark:text-white/60"
+        class="flex h-8 w-8 items-center justify-center rounded-full text-black/60 transition-colors duration-150 hover:bg-(--btn-plain-bg-hover) hover:text-(--primary) dark:text-white/60"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" />
@@ -162,7 +162,7 @@ function seek(e: MouseEvent) {
         type="button"
         onclick={togglePlay}
         aria-label={isPlaying ? "暂停" : "播放"}
-        class="flex h-12 w-12 items-center justify-center rounded-full bg-(--primary) text-white shadow-lg transition-transform duration-150 hover:scale-105 active:scale-95"
+        class="flex h-10 w-10 items-center justify-center rounded-full bg-(--primary) text-white shadow-lg transition-transform duration-150 hover:scale-105 active:scale-95"
       >
         {#if isPlaying}
           <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -178,7 +178,7 @@ function seek(e: MouseEvent) {
         type="button"
         onclick={playNext}
         aria-label="下一曲"
-        class="flex h-9 w-9 items-center justify-center rounded-full text-black/60 transition-colors duration-150 hover:bg-(--btn-plain-bg-hover) hover:text-(--primary) dark:text-white/60"
+        class="flex h-8 w-8 items-center justify-center rounded-full text-black/60 transition-colors duration-150 hover:bg-(--btn-plain-bg-hover) hover:text-(--primary) dark:text-white/60"
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
           <path d="M16 6h2v12h-2zM6 18l8.5-6L6 6z" />
