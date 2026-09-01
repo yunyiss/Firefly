@@ -298,8 +298,9 @@ const showStatsRow =
   }
 
   @media (max-width: 1023px) {
-    .showcase-grid {
-      grid-template-columns: 1fr;
+    /* 移动端：资料卡、二次元图（壁纸卡）与音乐卡整体不展示，关于我场景直接隐藏 */
+    section[data-motion="showcase"] {
+      display: none;
     }
 
     .anime-frame {

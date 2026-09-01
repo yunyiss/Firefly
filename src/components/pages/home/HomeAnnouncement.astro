@@ -1,5 +1,4 @@
 ---
-import { Icon } from "astro-icon/components";
 import { announcementConfig, homeConfig } from "@/config";
 import { url } from "@/utils/url-utils";
 
@@ -19,48 +18,98 @@ const dismissKey = "home-announcement-dismissed";
   homeConfig.announcement?.enable && config.content && (
     <div
       id="home-announcement"
-      class:list={[
-        "card-base sakura-card reveal-section flex items-center gap-3 rounded-(--radius-large) px-4 py-3 md:gap-4 md:px-5",
-        className,
-      ]}
+      class:list={["announce-card sakura-card reveal-section", className]}
       style={style}
       data-content={config.content}
       role="status"
     >
-      <span class="announce-shimmer" aria-hidden="true"></span>
-      <div class="announce-bell flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--btn-plain-bg-hover) text-(--primary)">
-        <Icon is:inline name="material-symbols:notifications-rounded" class="h-4.5 w-4.5" aria-hidden="true" />
+      {/* 装饰：飘落樱花瓣 + 柔光斑（纯 CSS，reduced-motion 关闭） */}
+      <div class="announce-deco" aria-hidden="true">
+        <svg class="announce-petal p1" viewBox="0 0 24 24">
+          <path d="M12 12 C 19 9.5, 17.5 3.5, 12 1.5 C 6.5 3.5, 5 9.5, 12 12 Z" />
+        </svg>
+        <svg class="announce-petal p2" viewBox="0 0 24 24">
+          <path d="M12 12 C 19 9.5, 17.5 3.5, 12 1.5 C 6.5 3.5, 5 9.5, 12 12 Z" />
+        </svg>
+        <svg class="announce-petal p3" viewBox="0 0 24 24">
+          <path d="M12 12 C 19 9.5, 17.5 3.5, 12 1.5 C 6.5 3.5, 5 9.5, 12 12 Z" />
+        </svg>
       </div>
-      <div class="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden">
-        <span class="shrink-0 rounded-md bg-(--btn-plain-bg-hover) px-2 py-0.5 text-xs font-bold text-(--primary)">
-          {config.title}
+
+      {/* 欢迎徽标：樱粉渐变圆 + 五瓣樱（与首页水印同款 path），轻轻摇晃 */}
+      <div class="announce-mascot" aria-hidden="true">
+        <svg viewBox="0 0 24 24" class="announce-sakura">
+          <g fill="currentColor">
+            {[0, 72, 144, 216, 288].map((deg) => (
+              <path
+                d="M12 12 C 19 9.5, 17.5 3.5, 12 1.5 C 6.5 3.5, 5 9.5, 12 12 Z"
+                transform={`rotate(${deg} 12 12)`}
+              />
+            ))}
+            <circle cx="12" cy="12" r="1.6" />
+          </g>
+        </svg>
+        <span class="announce-mascot-dot"></span>
+      </div>
+
+      {/* 文案主体：欢迎眉题 + 内容（移动端两行截断，桌面单行截断） */}
+      <div class="announce-body">
+        <span class="announce-eyebrow">
+          <span class="spark" aria-hidden="true">✦</span>
+          ようこそ · WELCOME
+          <span class="spark" aria-hidden="true">✦</span>
         </span>
-        <p class="truncate text-sm text-black/75 dark:text-white/75">{config.content}</p>
+        <p class="announce-text">{config.content}</p>
       </div>
+
       {config.link?.enable && (
         <a
           href={config.link.external ? config.link.url : url(config.link.url)}
           target={config.link.external ? "_blank" : undefined}
           rel={config.link.external ? "noopener noreferrer" : undefined}
-          class="group hidden shrink-0 items-center gap-1 text-sm font-medium text-black/60 transition-colors duration-150 hover:text-(--primary) dark:text-white/60 sm:flex"
+          class="announce-link group shrink-0"
         >
           {config.link.text}
-          <Icon
-            is:inline
-            name="material-symbols:chevron-right-rounded"
-            class="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5"
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
             aria-hidden="true"
-          />
+          >
+            <path d="M5 12h14M13 6l6 6-6 6"></path>
+          </svg>
         </a>
       )}
+
+      {/* 斜贴纸：沿用 config.title，桌面端显示 */}
+      {config.title && (
+        <span class="announce-sticker" aria-hidden="true">
+          {config.title}
+        </span>
+      )}
+
       {config.closable && (
         <button
           type="button"
           id="home-announcement-close"
           aria-label="关闭公告"
-          class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-black/40 transition-colors duration-150 hover:bg-(--btn-plain-bg-hover) hover:text-black/70 dark:text-white/40 dark:hover:text-white/70"
+          class="announce-close"
         >
-          <Icon is:inline name="material-symbols:close-rounded" class="h-4 w-4" aria-hidden="true" />
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            class="h-3.5 w-3.5"
+            aria-hidden="true"
+          >
+            <path d="M18 6 6 18M6 6l12 12"></path>
+          </svg>
         </button>
       )}
     </div>
@@ -68,78 +117,299 @@ const dismissKey = "home-announcement-dismissed";
 }
 
 <style>
-	/* 公告效果：光带扫过 + 铃铛周期性摇摆（prefers-reduced-motion 时关闭） */
+	/* ===== 欢迎卡：软 3D 贴纸感 × 樱花玻璃（告别「公告条」式生硬排版） ===== */
 	#home-announcement {
 		position: relative;
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		padding: 1.05rem 1.35rem;
 		overflow: hidden;
+		border-radius: 24px;
+		background:
+			radial-gradient(circle at 10% 18%, rgb(255 183 210 / 0.2), transparent 44%),
+			radial-gradient(circle at 90% 85%, rgb(199 185 255 / 0.16), transparent 46%),
+			rgb(255 240 246 / 0.08);
+		border: 1.5px solid rgb(255 183 210 / 0.32);
+		box-shadow:
+			0 14px 30px -16px rgb(90 20 55 / 0.5),
+			inset 0 1px 0 rgb(255 255 255 / 0.2);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
 	}
 
-	.announce-shimmer {
-		position: absolute;
-		top: 0;
-		left: -60%;
-		height: 100%;
-		width: 45%;
-		pointer-events: none;
-		background: linear-gradient(
-			105deg,
-			transparent 20%,
-			rgb(255 255 255 / 0.14) 45%,
-			rgb(255 183 210 / 0.22) 55%,
-			transparent 80%
-		);
-		transform: skewX(-18deg);
-		animation: announce-sweep 6s ease-in-out infinite;
+	/* ===== 欢迎徽标 ===== */
+	.announce-mascot {
+		position: relative;
+		display: grid;
+		flex: none;
+		place-items: center;
+		width: 2.9rem;
+		height: 2.9rem;
+		border-radius: 999px;
+		background: linear-gradient(135deg, rgb(255 151 188 / 0.85), rgb(178 150 255 / 0.85));
+		border: 2px solid rgb(255 255 255 / 0.55);
+		box-shadow:
+			0 8px 18px -8px rgb(240 86 143 / 0.6),
+			inset 0 2px 4px rgb(255 255 255 / 0.45);
+		color: rgb(255 255 255 / 0.95);
 	}
 
-	@keyframes announce-sweep {
+	.announce-sakura {
+		width: 1.35rem;
+		height: 1.35rem;
+		transform-origin: 50% 60%;
+		animation: mascot-sway 5.5s ease-in-out infinite;
+	}
+
+	@keyframes mascot-sway {
 		0%,
-		55% {
-			left: -60%;
-		}
-
-		85%,
-		100% {
-			left: 130%;
-		}
-	}
-
-	.announce-bell svg {
-		transform-origin: 50% 4px;
-		animation: bell-ring 6s ease-in-out infinite;
-	}
-
-	@keyframes bell-ring {
-		0%,
-		64%,
+		58%,
 		100% {
 			rotate: 0deg;
 		}
-
-		68% {
-			rotate: 12deg;
+		66% {
+			rotate: 14deg;
 		}
-
-		72% {
-			rotate: -10deg;
+		74% {
+			rotate: -11deg;
 		}
-
-		76% {
-			rotate: 7deg;
+		82% {
+			rotate: 6deg;
 		}
-
-		80% {
-			rotate: -5deg;
+		90% {
+			rotate: -3deg;
 		}
+	}
 
-		84% {
-			rotate: 2deg;
+	/* 徽标右下角的呼吸小圆点（在站感） */
+	.announce-mascot-dot {
+		position: absolute;
+		right: -1px;
+		bottom: -1px;
+		width: 0.7rem;
+		height: 0.7rem;
+		border-radius: 999px;
+		background: var(--primary);
+		border: 2px solid rgb(255 255 255 / 0.8);
+		animation: dot-breath 2.6s ease-in-out infinite;
+	}
+
+	@keyframes dot-breath {
+		0%,
+		100% {
+			transform: scale(1);
+			opacity: 1;
+		}
+		50% {
+			transform: scale(0.72);
+			opacity: 0.65;
+		}
+	}
+
+	/* ===== 文案 ===== */
+	.announce-body {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		gap: 0.2rem;
+		min-width: 0;
+	}
+
+	.announce-eyebrow {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.22em;
+		color: rgb(255 151 188 / 0.95);
+		text-shadow: 0 1px 8px rgb(240 86 143 / 0.35);
+	}
+
+	.announce-eyebrow .spark {
+		font-size: 0.6rem;
+		animation: spark-twinkle 2.4s ease-in-out infinite;
+	}
+
+	.announce-eyebrow .spark:last-child {
+		animation-delay: 1.2s;
+	}
+
+	@keyframes spark-twinkle {
+		0%,
+		100% {
+			opacity: 0.45;
+			transform: scale(0.85);
+		}
+		50% {
+			opacity: 1;
+			transform: scale(1.12);
+		}
+	}
+
+	.announce-text {
+		overflow: hidden;
+		font-size: 0.875rem;
+		line-height: 1.55;
+		color: rgb(255 255 255 / 0.88);
+		text-shadow: 0 1px 8px rgb(0 0 0 / 0.35);
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+	}
+
+	@media (min-width: 640px) {
+		.announce-text {
+			display: block;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
+
+	/* ===== 链接 ===== */
+	.announce-link {
+		display: none;
+		align-items: center;
+		gap: 0.25rem;
+		flex: none;
+		padding: 0.4rem 0.9rem;
+		border-radius: 999px;
+		font-size: 0.8rem;
+		font-weight: 600;
+		color: rgb(255 255 255 / 0.85);
+		background: rgb(255 255 255 / 0.1);
+		border: 1px solid rgb(255 255 255 / 0.22);
+		transition:
+			background 0.2s ease,
+			border-color 0.2s ease,
+			color 0.2s ease;
+	}
+
+	@media (min-width: 640px) {
+		.announce-link {
+			display: inline-flex;
+		}
+	}
+
+	.announce-link:hover {
+		color: #fff;
+		background: rgb(255 151 188 / 0.28);
+		border-color: rgb(255 151 188 / 0.55);
+	}
+
+	/* ===== 斜贴纸（config.title） ===== */
+	.announce-sticker {
+		position: absolute;
+		right: 2.6rem;
+		top: -0.55rem;
+		display: none;
+		flex: none;
+		padding: 0.2rem 0.7rem;
+		border-radius: 999px;
+		font-size: 0.62rem;
+		font-weight: 700;
+		letter-spacing: 0.18em;
+		color: #fff;
+		background: linear-gradient(135deg, rgb(255 151 188 / 0.92), rgb(240 86 143 / 0.92));
+		box-shadow: 0 6px 14px -6px rgb(240 86 143 / 0.7);
+		transform: rotate(6deg);
+		pointer-events: none;
+	}
+
+	@media (min-width: 640px) {
+		.announce-sticker {
+			display: block;
+		}
+	}
+
+	/* ===== 关闭按钮 ===== */
+	.announce-close {
+		display: flex;
+		flex: none;
+		align-items: center;
+		justify-content: center;
+		width: 1.75rem;
+		height: 1.75rem;
+		border-radius: 999px;
+		color: rgb(255 255 255 / 0.5);
+		background: rgb(255 255 255 / 0.07);
+		border: 1px solid rgb(255 255 255 / 0.16);
+		transition:
+			background 0.2s ease,
+			color 0.2s ease,
+			rotate 0.3s ease;
+	}
+
+	.announce-close:hover {
+		color: #fff;
+		background: rgb(255 151 188 / 0.3);
+		rotate: 90deg;
+	}
+
+	/* ===== 飘落樱花瓣装饰 ===== */
+	.announce-deco {
+		position: absolute;
+		inset: 0;
+		overflow: hidden;
+		pointer-events: none;
+	}
+
+	.announce-petal {
+		position: absolute;
+		width: 0.85rem;
+		height: 0.85rem;
+		color: rgb(255 151 188 / 0.4);
+		animation: petal-drift 9s ease-in-out infinite alternate;
+	}
+
+	.announce-petal path {
+		fill: currentColor;
+	}
+
+	.p1 {
+		left: 18%;
+		top: -12%;
+		animation-duration: 8s;
+	}
+
+	.p2 {
+		left: 46%;
+		top: 30%;
+		width: 0.6rem;
+		height: 0.6rem;
+		color: rgb(199 185 255 / 0.38);
+		animation-duration: 11s;
+		animation-delay: -3s;
+	}
+
+	.p3 {
+		left: 68%;
+		top: -8%;
+		width: 0.7rem;
+		height: 0.7rem;
+		animation-duration: 9.5s;
+		animation-delay: -6s;
+	}
+
+	@keyframes petal-drift {
+		0% {
+			transform: translateY(0) rotate(0deg);
+		}
+		50% {
+			transform: translateY(260%) rotate(150deg);
+		}
+		100% {
+			transform: translateY(60%) rotate(300deg);
 		}
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.announce-shimmer,
-		.announce-bell svg {
+		.announce-sakura,
+		.announce-mascot-dot,
+		.announce-eyebrow .spark,
+		.announce-petal {
 			animation: none;
 		}
 	}

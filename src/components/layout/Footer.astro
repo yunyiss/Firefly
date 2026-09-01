@@ -37,6 +37,22 @@ if (footerConfig.enable) {
 <div
   class="transition border-dashed border-[oklch(85%_0.01_var(--hue))] dark:border-white/15 rounded-2xl mb-12 flex flex-col items-center justify-center px-6"
 >
+  <!-- 手写签名描边：GSAP strokeDashoffset 动画见 utils/motion.ts setupFooterSignature，无 JS / reduced-motion 时直接完整显示 -->
+  <svg
+    id="footer-signature"
+    viewBox="0 0 200 84"
+    class="mb-2 h-auto w-44"
+    aria-hidden="true"
+  >
+    <path
+      id="footer-sign-path"
+      d="M28 62 C 20 34, 44 18, 58 30 C 70 41, 52 66, 40 64 C 62 72, 84 40, 96 28 C 90 46, 86 62, 96 60 C 106 58, 112 36, 120 26 C 118 42, 118 58, 128 58 C 142 58, 150 30, 146 22 C 140 40, 150 62, 164 50 C 176 40, 172 26, 166 24"
+      fill="none"
+      stroke="var(--primary)"
+      stroke-width="2.4"
+      stroke-linecap="round"
+    ></path>
+  </svg>
   <div class="transition text-50 text-sm text-center wrap">
     <div class="mb-2">
       {customFooterHtml && <div set:html={customFooterHtml} />}

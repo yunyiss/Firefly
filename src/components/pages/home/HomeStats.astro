@@ -74,13 +74,30 @@ const stats = [
 		suffix: daySuffix,
 	},
 ];
+
+// 移动端两列网格：奇数个统计项时最后一张通栏，避免 min-w 换行后的参差布局
+const spanLastOnMobile = stats.length % 2 === 1;
 ---
 
-<!-- 统计 chips：软 3D 小卡横排（数字滚增逻辑保留） -->
-<div id="home-stats-strip" class:list={["flex flex-wrap items-stretch gap-3", className]} style={style} aria-label={i18n(I18nKey.siteStats)}>
+<!-- 统计 chips：软 3D 小卡横排（数字滚增逻辑保留）；窄屏退化为两列网格 -->
+<div
+  id="home-stats-strip"
+  class:list={[
+    "flex flex-wrap items-stretch gap-3 max-sm:grid max-sm:grid-cols-2 max-sm:gap-2.5",
+    className,
+  ]}
+  style={style}
+  aria-label={i18n(I18nKey.siteStats)}
+>
   {
-    stats.map((stat) => (
-      <div class="stat-chip flex min-w-28 flex-col justify-center gap-1 rounded-2xl border border-white/15 bg-white/8 px-4 py-3 backdrop-blur-sm transition-all duration-150 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 hover:border-white/30">
+    stats.map((stat, i) => (
+      <div
+        class:list={[
+          "stat-chip flex min-w-28 flex-col justify-center gap-1 rounded-2xl border border-white/15 bg-white/8 px-4 py-3 backdrop-blur-sm transition-all duration-150 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 hover:border-white/30",
+          "max-sm:min-w-0",
+          spanLastOnMobile && i === stats.length - 1 && "max-sm:col-span-2",
+        ]}
+      >
         <span class="text-2xl font-bold leading-none text-white tabular-nums [text-shadow:0_3px_18px_rgba(0,0,0,0.55)]">
           <span data-count={String(stat.num)}>{stat.num.toLocaleString()}</span>
           {stat.suffix && <span class="ml-0.5 text-xs font-medium text-white/60">{stat.suffix}</span>}

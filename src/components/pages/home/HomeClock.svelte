@@ -60,7 +60,7 @@ const greeting = $derived.by(() => {
 	</div>
 
 	<div
-		class="clock-digits text-7xl font-bold tabular-nums tracking-tight text-white lg:text-8xl"
+		class="clock-digits text-6xl font-bold tabular-nums tracking-tight text-white sm:text-7xl lg:text-8xl"
 	>
 		{mounted ? `${pad(hours)}:${pad(minutes)}` : "--:--"}<span class="text-(--primary)"
 			>:{mounted ? pad(seconds) : "--"}</span

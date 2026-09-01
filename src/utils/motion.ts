@@ -127,9 +127,11 @@ export function teardownPageMotion(): void {
 	document.documentElement.classList.remove("motion-hero");
 }
 
-/** 按当前页面挂载动效（目前只有官网首页有编舞） */
+/** 按当前页面挂载动效（官网首页编舞 + 全站页脚签名） */
 export function setupPageMotion(): void {
 	teardownPageMotion();
+
+	setupFooterSignature();
 
 	if (!isMotionHome()) return;
 
@@ -174,6 +176,40 @@ export function setupPageMotion(): void {
 			}
 		});
 	}, 3000);
+}
+
+/**
+ * 页脚手写签名描边（源自主页草图 v6）：滚到页脚视口 85% 处起笔，
+ * 2.4s power2.inOut 画完。页脚是跨页持久元素（不在 Swup 容器内），
+ * 用 sign-drawn 标记保证整站只画一次：起笔即记账，切页不重播。
+ * reduced-motion 不会进入本函数（setupPageMotion 前置短路），SVG 默认完整显示。
+ */
+function setupFooterSignature(): void {
+	if (prefersReducedMotion()) return; // SVG 默认完整显示，不做描边动画
+	const svg = document.getElementById("footer-signature");
+	const path = document.querySelector<SVGPathElement>("#footer-sign-path");
+	if (!svg || !path) return;
+
+	if (svg.classList.contains("sign-drawn")) {
+		// 已画过但内联样式可能被 teardown 清残：确保笔画完整
+		gsap.set(path, { clearProps: "strokeDasharray,strokeDashoffset" });
+		return;
+	}
+
+	const signLen = path.getTotalLength();
+	gsap.set(path, { strokeDasharray: signLen, strokeDashoffset: signLen });
+	const tl = gsap.timeline({
+		scrollTrigger: {
+			trigger: svg,
+			start: "top 85%",
+			toggleActions: "play none none none",
+		},
+		onStart: () => svg.classList.add("sign-drawn"),
+	});
+	tl.to(path, { strokeDashoffset: 0, duration: 2.4, ease: "power2.inOut" }, 0);
+	pageTimelines.push(tl);
+	managedEls.push(path);
+	collectTimelineTargets(tl);
 }
 
 /** 收集时间轴触碰过的元素，供切页时 clearProps */
