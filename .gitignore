@@ -41,3 +41,6 @@ package/
 .codex*
 .claude
 .mimocode
+
+# workbuddy workspace data（AI 助手工作日志/记忆，不进 git）
+.workbuddy/
