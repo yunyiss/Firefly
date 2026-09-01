@@ -64,6 +64,8 @@ export const homeConfig: HomeConfig = {
 	// 主页个人资料卡（与音乐卡并排；内容请在 profileConfig 中配置）
 	profile: {
 		enable: true,
+		// 二次元图片（展示卡右侧大图，留空显示渐变占位框，后续填图片地址即可）
+		animeImage: "",
 	},
 
 	// 内容板块入口卡片
@@ -135,14 +137,20 @@ export const homeConfig: HomeConfig = {
 		showWords: true,
 	},
 
-	// 最新文章（杂志式列表）
+	// 最新文章（横向卡片流：滚动经过时从右向左扫入）
 	latestPosts: {
 		enable: true,
 		// 展示文章数量
-		count: 4,
-		// 是否显示小封面
+		count: 6,
+		// 是否显示封面
 		showCover: true,
 		// 「查看全部」按钮文字
 		moreText: "查看全部",
+		// 卡片流：单张卡片宽度（px）
+		cardWidth: 320,
+		// 卡片流：封面高度（px）
+		coverHeight: 170,
+		// 卡片流：扫入滚动距离系数
+		streamScroll: 0.6,
 	},
 };

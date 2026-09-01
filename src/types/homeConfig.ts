@@ -103,9 +103,11 @@ export interface HomeMusicConfig {
 	enable: boolean;
 }
 
-/** 主页个人资料卡配置（与音乐卡并排；内容沿用 profileConfig） */
+/** 主页个人资料卡配置（展示卡右侧大图，留空显示渐变占位框；内容沿用 profileConfig） */
 export interface HomeProfileConfig {
 	enable: boolean;
+	/** 二次元图片（展示卡右侧大图，留空显示渐变占位框） */
+	animeImage?: string;
 }
 
 /** 最新文章板块配置 */
@@ -119,6 +121,12 @@ export interface HomeLatestPostsConfig {
 	title?: string;
 	/** 「查看全部」按钮文字 */
 	moreText: string;
+	/** 卡片流：单张卡片宽度（px），默认 380 */
+	cardWidth?: number;
+	/** 卡片流：封面高度（px），默认 185 */
+	coverHeight?: number;
+	/** 卡片流：钉住滚动距离系数，越大这段滚得越长，默认 0.6 */
+	streamScroll?: number;
 }
 
 export interface HomeConfig {

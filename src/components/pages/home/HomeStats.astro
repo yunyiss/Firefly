@@ -76,16 +76,16 @@ const stats = [
 ];
 ---
 
-<!-- 去容器化的统计排版：大号数字直接排在壁纸上 -->
-<div id="home-stats-strip" class:list={["flex flex-wrap items-end gap-x-10 gap-y-6", className]} style={style} aria-label={i18n(I18nKey.siteStats)}>
+<!-- 统计 chips：软 3D 小卡横排（数字滚增逻辑保留） -->
+<div id="home-stats-strip" class:list={["flex flex-wrap items-stretch gap-3", className]} style={style} aria-label={i18n(I18nKey.siteStats)}>
   {
     stats.map((stat) => (
-      <div class="flex flex-col">
-        <span class="text-3xl font-bold leading-none text-white tabular-nums [text-shadow:0_3px_18px_rgba(0,0,0,0.55)] md:text-4xl">
+      <div class="stat-chip flex min-w-28 flex-col justify-center gap-1 rounded-2xl border border-white/15 bg-white/8 px-4 py-3 backdrop-blur-sm transition-all duration-150 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-1 hover:border-white/30">
+        <span class="text-2xl font-bold leading-none text-white tabular-nums [text-shadow:0_3px_18px_rgba(0,0,0,0.55)]">
           <span data-count={String(stat.num)}>{stat.num.toLocaleString()}</span>
-          {stat.suffix && <span class="ml-1 text-sm font-medium text-white/60">{stat.suffix}</span>}
+          {stat.suffix && <span class="ml-0.5 text-xs font-medium text-white/60">{stat.suffix}</span>}
         </span>
-        <span class="mt-1.5 text-xs tracking-wide text-white/55">{stat.label}</span>
+        <span class="text-xs tracking-wide text-white/55">{stat.label}</span>
       </div>
     ))
   }

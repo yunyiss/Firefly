@@ -12,24 +12,23 @@ interface Props {
 const { class: className, style } = Astro.props;
 ---
 
-<!-- 主页资料卡：侧栏个人资料卡的紧凑横排变体，与音乐卡并排等高。
-     仅桌面端显示（≥1024px）：移动端内容底部已有自带的侧栏资料卡 -->
+<!-- 主页「关于我」场景主角卡：展示作者形象（资料为主，音乐与插图在右侧副位） -->
 <div
-  class:list={["card-base hidden lg:flex items-center gap-5 rounded-(--radius-large) py-5 pl-9 pr-5 md:gap-6 md:py-6 md:pl-14 md:pr-6", className]}
+  class:list={["profile-card sakura-card flex flex-col items-center gap-4 rounded-[22px] p-8 text-center lg:p-10", className]}
   style={style}
 >
   <a
     href={url("/about/")}
     aria-label="前往关于页"
-    class="group relative h-16 w-16 shrink-0 overflow-hidden rounded-full border border-white/10 md:h-20 md:w-20"
+    class="group relative h-24 w-24 shrink-0 overflow-hidden rounded-full border border-white/10 lg:h-28 lg:w-28"
   >
     <ImageWrapper
       src={profileConfig.avatar || ""}
       alt="作者头像"
       class="h-full w-full"
       loading="lazy"
-      widths={[144]}
-      sizes="72px"
+      widths={[224]}
+      sizes="112px"
     />
     <div
       class="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-200 group-hover:bg-black/30"
@@ -43,20 +42,17 @@ const { class: className, style } = Astro.props;
     </div>
   </a>
 
-  <div class="flex min-w-0 flex-1 flex-col">
-    <div class="flex items-center gap-2.5">
-      <span class="text-base font-bold text-black/85 md:text-lg dark:text-white/85">
-        {profileConfig.name}
-      </span>
-      <span class="h-0.5 w-5 rounded-full bg-(--primary)"></span>
-    </div>
-    <p class="mt-1.5 truncate text-sm text-black/55 dark:text-white/55">
+  <div class="flex flex-col items-center gap-2">
+    <span class="text-xl font-bold text-white/95 [text-shadow:0_2px_12px_rgba(0,0,0,0.4)] lg:text-2xl">
+      {profileConfig.name}
+    </span>
+    <span class="h-0.5 w-8 rounded-full bg-(--primary)"></span>
+    <p class="max-w-72 text-sm leading-relaxed text-white/65 [text-shadow:0_2px_10px_rgba(0,0,0,0.4)]">
       {profileConfig.bio}
     </p>
   </div>
 
-  <!-- 社交链接：右侧竖排，填满卡片横向空间 -->
-  <div class="flex shrink-0 flex-col gap-2">
+  <div class="mt-1 flex items-center gap-2.5">
     {
       profileConfig.links.map((item) => (
         <a
@@ -64,11 +60,37 @@ const { class: className, style } = Astro.props;
           aria-label={item.name}
           href={item.url}
           target={item.url.startsWith("http") ? "_blank" : undefined}
-          class="flex h-8 w-8 items-center justify-center rounded-lg bg-(--btn-plain-bg-hover) text-black/60 transition-all duration-150 hover:scale-105 hover:text-(--primary) active:scale-95 dark:text-white/60"
+          class="flex h-9 w-9 items-center justify-center rounded-xl bg-white/10 text-white/70 backdrop-blur-sm transition-all duration-150 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] hover:scale-110 hover:bg-(--primary) hover:text-white active:scale-90"
         >
           <Icon is:inline name={item.icon} class="h-4.5 w-4.5" aria-hidden="true" />
         </a>
       ))
     }
   </div>
+
+  <a
+    href={url("/about/")}
+    class="profile-more mt-1 inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-5 py-2 text-sm font-medium text-white/85 backdrop-blur-sm transition-all duration-150 [transition-timing-function:cubic-bezier(0.34,1.56,0.64,1)] hover:scale-105 hover:border-(--primary) hover:text-white"
+  >
+    了解更多
+    <Icon is:inline name="material-symbols:arrow-forward-rounded" class="h-4 w-4" aria-hidden="true" />
+  </a>
 </div>
+
+<style>
+	.profile-card {
+		background: rgb(255 240 246 / 0.09);
+		border: 1.5px solid rgb(255 183 210 / 0.28);
+		box-shadow:
+			0 14px 30px -16px rgb(90 20 55 / 0.5),
+			inset 0 1px 0 rgb(255 255 255 / 0.2);
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+		justify-content: center;
+		height: 100%;
+	}
+
+	.profile-more {
+		cursor: pointer;
+	}
+</style>

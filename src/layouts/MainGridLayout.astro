@@ -363,6 +363,14 @@ const hasMultipleImages =
     </div>
 </div>
 
+<!-- GSAP 入场编舞的预隐藏标记：必须先于 Hero 标记解析执行，避免首帧闪烁；
+     该脚本位于 Swup 容器之外（跨页持久），reveal-pending 在整个会话内保留 -->
+{isHomePageCheck && (
+    <script is:inline>
+        document.documentElement.classList.add("reveal-pending");
+    </script>
+)}
+
 <!-- Wallpaper - 如果允许切换则始终渲染，否则只渲染当前模式 -->
 {(isWallpaperSwitchable || isBannerMode || isFullscreenMode || isOverlayMode) && (
 <div id="wallpaper-wrapper" class:list={[
@@ -666,12 +674,12 @@ const hasMultipleImages =
                     <div class="hero-content pointer-events-auto relative mx-auto w-full max-w-(--page-width) px-6 py-8 md:px-12">
                         <div class="max-w-[44rem] text-left">
                             {backgroundWallpaper.common?.homeText?.title && (
-                                <div class="banner-title hero-title font-bold text-white mb-3 lg:mb-4 leading-[1.15]" style={{ "--banner-title-size": heroTitleSize }}>
+                                <div class="banner-title hero-title font-bold text-white mb-3 lg:mb-4 leading-[1.15]" style={{ "--banner-title-size": heroTitleSize }} data-reveal-hero>
                                     {backgroundWallpaper.common.homeText.title}
                                 </div>
                             )}
                             {backgroundWallpaper.common?.homeText?.subtitle && (
-                                <div id="banner-subtitle" class="banner-subtitle text-white/90 text-left leading-snug mb-5 lg:mb-6 min-h-[2.4rem]" style={{ fontSize: backgroundWallpaper.common.homeText.subtitleSize || "1.35rem" }} data-subtitles={JSON.stringify(backgroundWallpaper.common.homeText.subtitle)}>
+                                <div id="banner-subtitle" class="banner-subtitle text-white/90 text-left leading-snug mb-5 lg:mb-6 min-h-[2.4rem]" style={{ fontSize: backgroundWallpaper.common.homeText.subtitleSize || "1.35rem" }} data-subtitles={JSON.stringify(backgroundWallpaper.common.homeText.subtitle)} data-reveal-hero>
                                     {backgroundWallpaper.common.homeText.typewriter?.enable ? (
                                         <TypewriterText
                                             text={backgroundWallpaper.common.homeText.subtitle}
@@ -693,12 +701,13 @@ const hasMultipleImages =
                                                 target={tag.external ? "_blank" : undefined}
                                                 rel={tag.external ? "noopener noreferrer" : undefined}
                                                 class="hero-tag inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-3.5 py-1.5 text-sm font-medium text-white backdrop-blur-sm transition-all duration-200 hover:bg-white/25 hover:scale-105"
+                                                data-reveal-hero
                                             >
                                                 {tag.icon && <Icon is:inline name={tag.icon} class="h-4 w-4" aria-hidden="true" />}
                                                 {tag.name}
                                             </a>
                                         ) : (
-                                            <span class="hero-tag inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-3.5 py-1.5 text-sm font-medium text-white backdrop-blur-sm">
+                                            <span class="hero-tag inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/10 px-3.5 py-1.5 text-sm font-medium text-white backdrop-blur-sm" data-reveal-hero>
                                                 {tag.icon && <Icon is:inline name={tag.icon} class="h-4 w-4" aria-hidden="true" />}
                                                 {tag.name}
                                             </span>
@@ -707,7 +716,7 @@ const hasMultipleImages =
                                 </div>
                             )}
                             {homeConfig.hero?.jumpButton?.enable !== false && homeConfig.hero?.jumpButton && (
-                                <div class="mt-5">
+                                <div class="mt-5" data-reveal-hero>
                                     <a
                                         href={homeConfig.hero.jumpButton.external ? homeConfig.hero.jumpButton.url : url(homeConfig.hero.jumpButton.url)}
                                         target={homeConfig.hero.jumpButton.external ? "_blank" : undefined}
@@ -725,14 +734,14 @@ const hasMultipleImages =
 
                     <!-- 右侧竖排装饰文字 -->
                     {homeConfig.hero?.verticalText && (
-                        <div class="hero-vertical-text pointer-events-none absolute right-[4.5vw] top-1/2 hidden -translate-y-1/2 select-none lg:block">
+                        <div class="hero-vertical-text pointer-events-none absolute right-[4.5vw] top-1/2 hidden -translate-y-1/2 select-none lg:block" data-reveal-hero>
                             {homeConfig.hero.verticalText}
                         </div>
                     )}
 
                     <!-- 右下角斜置欢迎玻璃卡 -->
                     {homeConfig.hero?.badge?.enable && (
-                        <div class="pointer-events-none absolute bottom-[16vh] right-[5vw] hidden -rotate-3 select-none lg:block">
+                        <div class="pointer-events-none absolute bottom-[16vh] right-[5vw] hidden -rotate-3 select-none lg:block" data-reveal-hero>
                             <div class="rounded-2xl border border-white/25 bg-white/10 px-5 py-3 text-right shadow-lg backdrop-blur-md">
                                 <div class="text-lg font-bold text-white">{homeConfig.hero.badge.title}</div>
                                 <div class="mt-1 text-[0.7rem] tracking-[0.15em] text-white/75">{homeConfig.hero.badge.text}</div>
@@ -744,12 +753,12 @@ const hasMultipleImages =
                 <div class="w-4/5 lg:w-3/4 text-center mb-0">
                     <div class="flex flex-col">
                         {backgroundWallpaper.common?.homeText?.title && (
-                            <div class="banner-title font-bold text-white mb-2 lg:mb-4 leading-tight" style={{ "--banner-title-size": heroTitleSize }}>
+                            <div class="banner-title font-bold text-white mb-2 lg:mb-4 leading-tight" style={{ "--banner-title-size": heroTitleSize }} data-reveal-hero>
                                 {backgroundWallpaper.common.homeText.title}
                             </div>
                         )}
                         {backgroundWallpaper.common?.homeText?.subtitle && (
-                            <div id="banner-subtitle" class="banner-subtitle text-white/90 leading-snug" style={{ fontSize: backgroundWallpaper.common.homeText.subtitleSize || "1.5rem" }} data-subtitles={JSON.stringify(backgroundWallpaper.common.homeText.subtitle)}>
+                            <div id="banner-subtitle" class="banner-subtitle text-white/90 leading-snug" style={{ fontSize: backgroundWallpaper.common.homeText.subtitleSize || "1.5rem" }} data-subtitles={JSON.stringify(backgroundWallpaper.common.homeText.subtitle)} data-reveal-hero>
                                 {backgroundWallpaper.common.homeText.typewriter?.enable ? (
                                     <TypewriterText
                                         text={backgroundWallpaper.common.homeText.subtitle}

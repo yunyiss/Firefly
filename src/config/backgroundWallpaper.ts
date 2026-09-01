@@ -38,21 +38,15 @@ export const backgroundWallpaper: BackgroundWallpaperConfig = {
 	src: {
 		// 桌面背景图片（支持单张或多张随机）
 		// desktop: "assets/images/DesktopWallpaper/d1.avif",
-		desktop: [
-			"https://img.weibiyi.com/random?type=img&dir=pc",
-			],
+		desktop: ["https://img.weibiyi.com/random?type=img&dir=pc"],
 		// 移动背景图片（支持单张或多张随机）
 		// mobile: "assets/images/MobileWallpaper/m1.avif",
-		mobile: [
-			"https://img.weibiyi.com/random?type=img&dir=mb",
-		],
+		mobile: ["https://img.weibiyi.com/random?type=img&dir=mb"],
 		// 背景视频播放地址
 		// 支持单个视频路径（字符串）或多个视频循环（数组，参考上面壁纸配置）
 		// 支持远程视频URL，本地视频请放在 public/assets/videos/ 目录下
 		// playerUrl: "/assets/videos/firefly.mp4",
-		playerUrl: [
-			"https://img.weibiyi.com/file/1785595859990_爱愿嘉年华.mp4",
-		],
+		playerUrl: ["https://img.weibiyi.com/file/1785595859990_爱愿嘉年华.mp4"],
 	},
 	// 横幅壁纸和全屏壁纸共享配置
 	common: {

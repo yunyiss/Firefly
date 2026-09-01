@@ -17,6 +17,9 @@ interface Props {
 const { class: className, style } = Astro.props;
 
 const sectionTitle = homeConfig.latestPosts.title ?? i18n(I18nKey.recentPosts);
+const cardWidth = homeConfig.latestPosts.cardWidth ?? 380;
+const coverHeight = homeConfig.latestPosts.coverHeight ?? 185;
+const streamScroll = homeConfig.latestPosts.streamScroll ?? 0.6;
 
 const allPosts = await getSortedPosts();
 const latestPosts = allPosts
@@ -27,7 +30,7 @@ const latestPosts = allPosts
 		url: getPostUrlBySlug(entry.id),
 		date: formatDateToYYYYMMDD(entry.data.published),
 		category: entry.data.category,
-		tags: (entry.data.tags ?? []).slice(0, 2),
+		tags: (entry.data.tags ?? []).slice(0, 1),
 		cover: processCoverImageSync(entry.data.image, entry.id),
 		coverBasePath: getFileDirFromPath(entry.filePath || ""),
 		coverApiUrls: getApiUrlList(entry.data.image, entry.id),
@@ -35,71 +38,309 @@ const latestPosts = allPosts
 	}));
 
 const showCover = homeConfig.latestPosts.showCover !== false;
+
+const sectionStyle = [
+	style ?? "",
+	`--stream-card-w: ${cardWidth}px; --stream-cover-h: ${coverHeight}px; --stream-scroll: ${streamScroll};`,
+]
+	.filter(Boolean)
+	.join(" ");
 ---
 
-<!-- 去容器化的最新文章：杂志式列表，大标题 + 日期 + 小封面，细分隔线分行 -->
-<div class:list={["flex flex-col", className]} style={style} aria-label={sectionTitle}>
-  <div class="mb-2 flex items-baseline justify-between">
-    <h2 class="flex items-baseline gap-3 text-2xl font-bold text-white md:text-3xl [text-shadow:0_3px_18px_rgba(0,0,0,0.5)]">
-      <span class="font-mono text-sm font-bold text-white/45">02</span>
-      {sectionTitle}
-    </h2>
-    <a
-      href={url("/posts/")}
-      class="group flex items-center gap-1 text-sm font-medium text-white/60 transition-colors duration-150 hover:text-(--primary) [text-shadow:0_2px_10px_rgba(0,0,0,0.45)]"
-    >
-      {homeConfig.latestPosts.moreText}
-      <Icon
-        is:inline
-        name="material-symbols:chevron-right-rounded"
-        class="h-4.5 w-4.5 transition-transform duration-200 group-hover:translate-x-0.5"
-        aria-hidden="true"
-      />
-    </a>
-  </div>
+<!-- 最新文章卡片流：滚动经过时卡片从右向左划过（transit scrub 编排见 utils/motion.ts setupPostStream） -->
+<section
+	id="home-posts-stream"
+	class:list={["stream-section", className ?? ""]}
+	style={sectionStyle}
+	data-motion="stream"
+	aria-label={sectionTitle}
+>
+	<div
+		class="stream-stage"
+		data-lenis-prevent
+		tabindex="0"
+		aria-label={`${sectionTitle}（可左右滑动查看全部卡片）`}
+	>
+		<div class="stream-head">
+			<h2 class="stream-title">
+				<span class="index">02</span>
+				{sectionTitle}
+			</h2>
+			<a class="more-link" href={url("/posts/")}>
+				{homeConfig.latestPosts.moreText}
+				<Icon
+					is:inline
+					name="material-symbols:chevron-right-rounded"
+					class="h-4.5 w-4.5"
+					aria-hidden="true"
+				/>
+			</a>
+		</div>
 
-  <div class="flex flex-col">
-    {
-      latestPosts.map((post, index) => (
-        <a
-          href={post.url}
-          class="group grid grid-cols-[auto_1fr_auto] items-center gap-3 border-b border-white/10 py-4 transition-colors duration-200 first:border-t hover:border-white/25 md:gap-7 md:py-5"
-          aria-label={post.title}
-        >
-          <span class="hidden font-mono text-xs text-white/35 md:block">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-          <div class="min-w-0">
-            <h3 class="flex items-center gap-2 truncate text-base font-bold text-white/90 transition-colors duration-200 group-hover:text-(--primary) md:text-2xl [text-shadow:0_2px_12px_rgba(0,0,0,0.45)]">
-              <span class="truncate">{post.title}</span>
-              {post.password && (
-                <Icon
-                  is:inline
-                  name="material-symbols:lock-rounded"
-                  class="h-4 w-4 shrink-0 text-white/45"
-                  aria-hidden="true"
-                />
-              )}
-            </h3>
-            <div class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-white/50 md:mt-2 md:text-xs">
-              <span class="font-mono">{post.date}</span>
-              {post.category && <span class="text-white/40">·</span>}
-              {post.category && <span>{post.category}</span>}
-              {post.tags.slice(0, 2).map((tag) => <span class="text-white/40">#{tag}</span>)}
-            </div>
-          </div>
-          {showCover && post.cover && (
-            <CoverImage
-              src={post.cover}
-              basePath={post.coverBasePath}
-              apiUrls={post.coverApiUrls}
-              alt={post.title}
-              loading="lazy"
-              class="h-14 w-20 min-h-14! shrink-0 rounded-lg border border-white/10 opacity-85 transition-all duration-300 group-hover:opacity-100 md:h-20 md:w-32 md:min-h-20!"
-            />
-          )}
-        </a>
-      ))
-    }
-  </div>
-</div>
+		<div class="stream-track" id="stream-track">
+			{
+				latestPosts.map((post, index) => (
+					<a class="stream-card" href={post.url} aria-label={post.title}>
+						<div class="stream-cover">
+							{showCover && post.cover ? (
+								<CoverImage
+									src={post.cover}
+									basePath={post.coverBasePath}
+									apiUrls={post.coverApiUrls}
+									alt={post.title}
+									loading="lazy"
+									class="stream-cover-img"
+								/>
+							) : (
+								<div class:list={["stream-cover-ph", `ph-${index % 5}`]}>
+									<svg viewBox="0 0 24 24" aria-hidden="true">
+										<g fill="currentColor">
+											{[0, 72, 144, 216, 288].map((deg) => (
+												<path
+													d="M12 12 C 19 9.5, 17.5 3.5, 12 1.5 C 6.5 3.5, 5 9.5, 12 12 Z"
+													transform={`rotate(${deg} 12 12)`}
+												/>
+											))}
+											<circle cx="12" cy="12" r="1.6" />
+										</g>
+									</svg>
+								</div>
+							)}
+						</div>
+						<div class="stream-info">
+							<div class="t">
+								<span>{post.title}</span>
+								{post.password && (
+									<Icon
+										is:inline
+										name="material-symbols:lock-rounded"
+										class="lock"
+										aria-hidden="true"
+									/>
+								)}
+							</div>
+							<div class="m">
+								{post.category && <span class="cat">{post.category}</span>}
+								<span class="font-mono">{post.date}</span>
+								{post.tags.map((tag) => <span class="text-white/40">#{tag}</span>)}
+							</div>
+						</div>
+					</a>
+				))
+			}
+		</div>
+	</div>
+</section>
+
+<style>
+	.stream-section {
+		position: relative;
+	}
+
+	/* 横向滚动舞台：整行被 pin 钉住，滚动驱动卡片从右向左流过（motion.ts） */
+	/* 横向滚动舞台：整行 pin 钉住（100vh），滚动驱动卡片从右向左流过 */
+	.stream-section {
+		height: 100vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		overflow: hidden;
+	}
+
+	.stream-stage {
+		position: relative;
+		padding: 1.5rem 0 2rem;
+	}
+
+	.stream-head {
+		width: min(1120px, 92vw);
+		margin: 0 auto 1.75rem;
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+	}
+
+	.stream-title {
+		display: flex;
+		align-items: baseline;
+		gap: 0.75rem;
+		font-size: 1.5rem;
+		font-weight: 700;
+		color: #fff;
+		text-shadow: 0 3px 18px rgb(0 0 0 / 0.5);
+	}
+
+	.stream-title .index {
+		font-family: var(--font-mono, monospace);
+		font-size: 0.875rem;
+		color: rgb(255 255 255 / 0.45);
+	}
+
+	.more-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		font-size: 0.8125rem;
+		color: rgb(255 255 255 / 0.6);
+		transition:
+			color 0.15s ease,
+			gap 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+	}
+
+	.more-link:hover {
+		color: var(--primary);
+		gap: 0.5rem;
+	}
+
+	.stream-track {
+		display: flex;
+		width: max-content;
+		will-change: transform;
+		padding: 2.5rem 0;
+		/* 左右内边距 = 内容区居中偏移：起点首卡对齐内容左缘，终点末卡对齐内容右缘 */
+		padding-left: max(calc((100vw - 1120px) / 2), 1.5rem);
+		padding-right: max(calc((100vw - 1120px) / 2), 1.5rem);
+	}
+
+	/* 软 3D 樱粉卡片（呼应草图演示⑥） */
+	.stream-card {
+		width: min(var(--stream-card-w), 78vw);
+		margin-right: 1.6rem;
+		flex-shrink: 0;
+		border-radius: 22px;
+		overflow: hidden;
+		background: rgb(255 240 246 / 0.1);
+		border: 1.5px solid rgb(255 183 210 / 0.28);
+		box-shadow:
+			0 14px 30px -16px rgb(90 20 55 / 0.5),
+			inset 0 1px 0 rgb(255 255 255 / 0.2);
+		transition:
+			transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+			border-color 0.25s ease,
+			box-shadow 0.25s ease;
+	}
+
+	.stream-card:hover {
+		transform: translateY(-6px) rotate(-1deg);
+		border-color: rgb(255 151 188 / 0.65);
+		box-shadow:
+			0 20px 38px -16px rgb(240 86 143 / 0.5),
+			inset 0 1px 0 rgb(255 255 255 / 0.28);
+	}
+
+	.stream-cover {
+		height: var(--stream-cover-h);
+		overflow: hidden;
+		position: relative;
+	}
+
+	.stream-cover :global(.stream-cover-img) {
+		height: var(--stream-cover-h);
+		width: 100%;
+		min-height: var(--stream-cover-h);
+	}
+
+	.stream-cover :global(.stream-cover-img img) {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+	}
+
+	/* 无封面占位：樱花渐变（5 色按序轮换） */
+	.stream-cover-ph {
+		height: 100%;
+		display: grid;
+		place-items: center;
+	}
+
+	.stream-cover-ph svg {
+		width: 64px;
+		height: 64px;
+		color: rgb(255 255 255 / 0.4);
+		filter: drop-shadow(0 4px 14px rgb(0 0 0 / 0.25));
+	}
+
+	.stream-cover-ph::after {
+		content: "";
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(
+			circle at 70% 25%,
+			rgb(255 255 255 / 0.28),
+			transparent 55%
+		);
+	}
+
+	.ph-0 {
+		background: linear-gradient(135deg, #ffb7d2, #f0568f);
+	}
+
+	.ph-1 {
+		background: linear-gradient(135deg, #ffd3e4, #ff97bc);
+	}
+
+	.ph-2 {
+		background: linear-gradient(135deg, #c7b9ff, #8f7be8);
+	}
+
+	.ph-3 {
+		background: linear-gradient(135deg, #ffe3c2, #ffb287);
+	}
+
+	.ph-4 {
+		background: linear-gradient(135deg, #bdebe0, #6fc7b2);
+	}
+
+	.stream-info {
+		padding: 1rem 1.125rem 1.125rem;
+	}
+
+	.stream-info .t {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-size: 1.03rem;
+		font-weight: 700;
+		line-height: 1.5;
+		color: rgb(255 255 255 / 0.92);
+		white-space: nowrap;
+		overflow: hidden;
+		text-shadow: 0 2px 12px rgb(0 0 0 / 0.35);
+	}
+
+	.stream-info .t span {
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.stream-info .lock {
+		flex-shrink: 0;
+		width: 1rem;
+		height: 1rem;
+		color: rgb(255 255 255 / 0.45);
+	}
+
+	.stream-info .m {
+		margin-top: 0.55rem;
+		display: flex;
+		align-items: center;
+		gap: 0.65rem;
+		font-size: 0.75rem;
+		color: rgb(255 255 255 / 0.5);
+	}
+
+	.stream-info .m .cat {
+		color: var(--primary);
+	}
+
+	@media (max-width: 767px) {
+		.stream-head {
+			left: 1rem;
+			right: 1rem;
+		}
+
+		.stream-info .t {
+			font-size: 0.95rem;
+		}
+	}
+</style>

@@ -92,7 +92,7 @@ function seek(e: MouseEvent) {
 
 <!-- 主页音乐播放卡：与导航栏播放器共用全局状态（window.__fireflyMusic） -->
 <div
-  class="card-base flex items-center gap-4 rounded-(--radius-large) p-4 md:gap-5 md:p-5 {className ?? ''}"
+  class="card-base sakura-card flex items-center gap-4 rounded-(--radius-large) p-4 md:gap-5 md:p-5 {className ?? ''}"
   aria-label="音乐播放"
 >
   <!-- 旋转封面 -->

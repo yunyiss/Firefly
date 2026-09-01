@@ -762,6 +762,12 @@ const siteLang = lang.replace("_", "-");
   } from "@/constants/constants";
   import { backgroundWallpaper, expressiveCodeConfig, siteConfig } from "@/config";
   import { initializeFloatingPanels } from "@/utils/floating-panel-utils";
+  import {
+    initMotionEngine,
+    refreshMotion,
+    setupPageMotion,
+    teardownPageMotion,
+  } from "@/utils/motion";
 
   /* Preload fonts */
   // (async function() {
@@ -811,6 +817,13 @@ function disableAnimation() {
   const stickyNavbar = siteConfig.navbar.stickyNavbar ?? false;
 
   initializeFloatingPanels();
+
+  // GSAP + Lenis 动效引擎：整页加载初始化一次，Swup 切页由钩子挂载/卸载
+  initMotionEngine();
+  setupPageMotion();
+  window.addEventListener("wallpaperModeChange", () => setupPageMotion());
+  window.addEventListener("load", refreshMotion);
+  document.addEventListener("astro:page-load", refreshMotion);
 
   function setClickOutsideToClose(panel: string, ignores: string[]) {
       document.addEventListener("click", (event) => {
@@ -992,6 +1005,10 @@ function disableAnimation() {
     });
     window.swup.hooks.on("content:replace", () => {
       initializeFloatingPanels();
+
+      // 动效随页面内容切换：销毁旧页触发器，待新内容脚本就绪后重新挂载
+      teardownPageMotion();
+      setTimeout(() => setupPageMotion(), 80);
       const isHome = pathsEqual(window.location.pathname, url("/"));
       const currentMode = document.documentElement.getAttribute("data-wallpaper-mode");
       const isMobileForBanner = window.innerWidth < 1024;
@@ -1264,6 +1281,9 @@ function disableAnimation() {
       // 更新网格列数和侧边栏组件可见性
       updateMainGridCols();
       updateSidebarComponentsVisibility();
+
+      // 页面过渡完成后校正滚动触发器位置
+      refreshMotion();
 
       // hide the temp high element when the transition is done
       const heightExtend = document.getElementById("page-height-extend");
@@ -1747,9 +1767,12 @@ function disableAnimation() {
     frosted.style.opacity = fade.toFixed(3);
     // 遮罩随毛玻璃渐入而减淡，避免底部过度压暗（仅首页有遮罩）
     if (scrim) scrim.style.opacity = isHome ? (1 - fade * 0.5).toFixed(3) : "0";
-    // 壁纸上的文案随滚动上移（sticky 壁纸固定，文字模拟正常滚出视口）
+    // 壁纸上的文案随滚动上移（sticky 壁纸固定，文字模拟正常滚出视口）；
+    // GSAP 编舞接管 Hero 时（html.motion-hero）跳过，滚动变换由 scrub 时间轴驱动
     const hero = document.getElementById("banner-overlay-container");
-    if (hero) hero.style.transform = `translateY(${-y}px)`;
+    if (hero && !document.documentElement.classList.contains("motion-hero")) {
+      hero.style.transform = `translateY(${-y}px)`;
+    }
   }
 
   window.addEventListener("scroll", updateHomeScrollFx, { passive: true });
@@ -1765,6 +1788,8 @@ function disableAnimation() {
     document
       .querySelectorAll<HTMLElement>(".reveal-section:not(.revealed)")
       .forEach((el) => {
+        // GSAP 编舞接管的板块（motion-managed）由 ScrollTrigger 驱动，跳过类名扫描
+        if (el.classList.contains("motion-managed")) return;
         if (el.getBoundingClientRect().top < vh * 0.94) {
           el.classList.add("revealed");
         }

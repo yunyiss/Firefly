@@ -15,7 +15,7 @@ import MainGridLayout from "@/layouts/MainGridLayout.astro";
 import { getSortedPosts } from "@/utils/content-utils";
 import { url } from "@/utils/url-utils";
 
-// 官网风格首页；文章列表位于 /posts/（配置见 homeConfig）
+// 官网风格首页：自然高度流动布局，樱花软萌风格（草图样式），GSAP 编舞见 utils/motion.ts
 const homeEnabled = homeConfig.enable === true;
 
 // 回退模式（homeConfig.enable = false）下，首页直接渲染文章列表第一页
@@ -39,22 +39,69 @@ const showStatsRow =
 <MainGridLayout title={siteConfig.title} hideSidebar={hideSidebar}>
   {
     homeEnabled ? (
-      <div id="home-sections" class="flex flex-col gap-10 md:gap-14">
+      <div id="home-sections">
         {homeConfig.announcement.enable && <HomeAnnouncement />}
-        {showStatsRow && (
-          <div class="reveal-section flex flex-wrap items-end justify-between gap-x-10 gap-y-8">
-            {homeConfig.clock.enable && <HomeClock client:load />}
-            {homeConfig.stats.enable && <HomeStats />}
-          </div>
+
+        {/* ===== 时间 + 探索：时钟统计在上，细分隔线，软 3D 卡片网格在下 ===== */}
+        {(homeConfig.sectionCards.enable || showStatsRow) && (
+          <section class="home-scene reveal-section" data-motion="explore">
+            {showStatsRow && (
+              <div class="scene-inner clock-scene">
+                <svg
+                  class="clock-watermark"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
+                  <g fill="currentColor">
+                    {[0, 72, 144, 216, 288].map((deg) => (
+                      <path
+                        d="M12 12 C 19 9.5, 17.5 3.5, 12 1.5 C 6.5 3.5, 5 9.5, 12 12 Z"
+                        transform={`rotate(${deg} 12 12)`}
+                      />
+                    ))}
+                    <circle cx="12" cy="12" r="1.6" />
+                  </g>
+                </svg>
+                <div class="stats-row">
+                  {homeConfig.clock.enable && <HomeClock client:load />}
+                  {homeConfig.stats.enable && <HomeStats />}
+                </div>
+              </div>
+            )}
+            {homeConfig.sectionCards.enable && (
+              <div class="explore-wrap">
+                <HomeExplore />
+              </div>
+            )}
+          </section>
         )}
-        {homeConfig.sectionCards.enable && <HomeExplore class="reveal-section" />}
+
+        {/* ===== 关于我：资料为主 · 二次元图占位 · 音乐为副 ===== */}
         {(homeConfig.profile.enable || homeConfig.music.enable) && (
-          <div class="reveal-section grid grid-cols-1 gap-4 lg:grid-cols-[35fr_65fr]">
-            {homeConfig.profile.enable && <HomeProfile />}
-            {homeConfig.music.enable && <HomeMusic client:load />}
-          </div>
+          <section class="home-scene reveal-section" data-motion="showcase">
+            <div class="scene-inner">
+              <div class="showcase-grid">
+                {homeConfig.profile.enable && <HomeProfile />}
+                <div class="showcase-side">
+                  <div class="anime-frame" aria-hidden={homeConfig.profile.animeImage ? undefined : "true"}>
+                    {homeConfig.profile.animeImage ? (
+                      <img src={homeConfig.profile.animeImage} alt="二次元插图" loading="lazy" />
+                    ) : (
+                      <div class="anime-placeholder">
+                        <Icon is:inline name="material-symbols:image-rounded" class="h-10 w-10" aria-hidden="true" />
+                        <span>二次元图片位</span>
+                      </div>
+                    )}
+                  </div>
+                  {homeConfig.music.enable && <HomeMusic client:load />}
+                </div>
+              </div>
+            </div>
+          </section>
         )}
-        {homeConfig.latestPosts.enable && <HomeLatestPosts class="reveal-section" />}
+
+        {/* ===== 最新文章卡片流：滚动经过时从右向左扫入 ===== */}
+        {homeConfig.latestPosts.enable && <HomeLatestPosts />}
       </div>
     ) : (
       <>
@@ -118,6 +165,146 @@ const showStatsRow =
   html.reveal-pending .reveal-section.revealed {
     opacity: 1;
     transform: none;
+  }
+
+  /* GSAP 编舞接管的板块：关闭 CSS 过渡（由补间逐帧驱动），预隐藏仍由上方规则承担 */
+  html.reveal-pending .reveal-section.motion-managed {
+    transition: none !important;
+  }
+
+  /* ===== 场景：自然高度流动 + 樱花软萌装饰 ===== */
+  .home-scene {
+    position: relative;
+    padding: 6.5rem 0;
+  }
+
+  .scene-inner {
+    width: min(1120px, 92vw);
+    margin: 0 auto;
+  }
+
+  /* 探索容器：与时钟区上下等宽 */
+  .explore-wrap {
+    width: min(1120px, 92vw);
+    margin: 4.5rem auto 0;
+  }
+
+  /* 时钟区块：右侧樱花水印缓旋装饰 */
+  .clock-scene {
+    position: relative;
+  }
+
+  .clock-watermark {
+    position: absolute;
+    right: -2rem;
+    top: 50%;
+    width: min(20rem, 36vw);
+    translate: 0 -50%;
+    color: rgb(255 151 188 / 0.09);
+    animation: watermark-spin 80s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes watermark-spin {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  .stats-row {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2.5rem;
+  }
+
+  /* ===== 关于我：资料为主，二次元图 + 音乐为副 ===== */
+  .showcase-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 1.25rem;
+    align-items: stretch;
+  }
+
+  /* 防止网格子项内容（如长标题）把列撑破视口 */
+  .showcase-grid > * {
+    min-width: 0;
+  }
+
+  .showcase-side {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .anime-frame {
+    flex: 1;
+    min-height: 15rem;
+    border-radius: 22px;
+    overflow: hidden;
+    border: 1.5px solid rgb(255 183 210 / 0.28);
+    background: rgb(255 240 246 / 0.07);
+    box-shadow:
+      0 14px 30px -16px rgb(90 20 55 / 0.5),
+      inset 0 1px 0 rgb(255 255 255 / 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .anime-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .anime-placeholder {
+    height: 100%;
+    min-height: 15rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    color: rgb(255 255 255 / 0.35);
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    background:
+      radial-gradient(circle at 30% 25%, rgb(255 151 188 / 0.16), transparent 55%),
+      radial-gradient(circle at 75% 80%, rgb(199 185 255 / 0.14), transparent 50%);
+  }
+
+  /* ===== 樱粉软 3D hover：主页玻璃卡通用 ===== */
+  #home-sections .sakura-card {
+    border: 1.5px solid rgb(255 183 210 / 0.28);
+    transition:
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  #home-sections .sakura-card:hover {
+    border-color: rgb(255 151 188 / 0.6);
+    box-shadow:
+      0 22px 46px -18px rgb(240 86 143 / 0.45),
+      inset 0 1px 0 rgb(255 255 255 / 0.25);
+  }
+
+  /* 横向溢出兜底：主页内容不应突出右缘 */
+  #home-sections {
+    overflow-x: clip;
+  }
+
+  @media (max-width: 1023px) {
+    .showcase-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .anime-frame {
+      min-height: 13rem;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

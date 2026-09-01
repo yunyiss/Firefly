@@ -15,8 +15,7 @@ export const siteConfig: SiteConfig = {
 	site_url: "https://www.weibiyi.com",
 
 	// 站点描述
-	description:
-		"此处连接着某人的思考回路。内容包含技术、妄想与不可解析的数据。",
+	description: "此处连接着某人的思考回路。内容包含技术、妄想与不可解析的数据。",
 
 	// 站点关键词
 	keywords: [
