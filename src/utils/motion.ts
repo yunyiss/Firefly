@@ -260,7 +260,7 @@ function choreograph(
 		scrollTrigger: {
 			trigger,
 			start: "top 78%",
-			toggleActions: "play none none reset",
+			toggleActions: "play none none none",
 		},
 	});
 	build(tl);
@@ -369,8 +369,11 @@ function setupPostStream(): void {
 			end: () =>
 				"+=" + Math.max(600, Math.round(track.scrollWidth - window.innerWidth)),
 			pin: true,
-			scrub: 0.4,
-			anticipatePin: 1,
+			// Lenis 使用 window 的原生滚动位置，保持 ScrollTrigger 默认的 fixed pin。
+			// 强制 transform pin 会在钉住边界额外叠加位移补偿，容易造成视觉抖动。
+			// 直连模式（scrub: true）：卡片位置 1:1 映射滚动。Lenis 已对滚动做平滑，
+			// 数值 scrub 会二次插值，产生"强制吸回/颤抖抽搐"的拉扯感
+			scrub: true,
 			invalidateOnRefresh: true,
 		},
 	});

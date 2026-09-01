@@ -27,7 +27,8 @@ const dismissKey = "home-announcement-dismissed";
       data-content={config.content}
       role="status"
     >
-      <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--btn-plain-bg-hover) text-(--primary)">
+      <span class="announce-shimmer" aria-hidden="true"></span>
+      <div class="announce-bell flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-(--btn-plain-bg-hover) text-(--primary)">
         <Icon is:inline name="material-symbols:notifications-rounded" class="h-4.5 w-4.5" aria-hidden="true" />
       </div>
       <div class="flex min-w-0 flex-1 items-center gap-2.5 overflow-hidden">
@@ -65,6 +66,84 @@ const dismissKey = "home-announcement-dismissed";
     </div>
   )
 }
+
+<style>
+	/* 公告效果：光带扫过 + 铃铛周期性摇摆（prefers-reduced-motion 时关闭） */
+	#home-announcement {
+		position: relative;
+		overflow: hidden;
+	}
+
+	.announce-shimmer {
+		position: absolute;
+		top: 0;
+		left: -60%;
+		height: 100%;
+		width: 45%;
+		pointer-events: none;
+		background: linear-gradient(
+			105deg,
+			transparent 20%,
+			rgb(255 255 255 / 0.14) 45%,
+			rgb(255 183 210 / 0.22) 55%,
+			transparent 80%
+		);
+		transform: skewX(-18deg);
+		animation: announce-sweep 6s ease-in-out infinite;
+	}
+
+	@keyframes announce-sweep {
+		0%,
+		55% {
+			left: -60%;
+		}
+
+		85%,
+		100% {
+			left: 130%;
+		}
+	}
+
+	.announce-bell svg {
+		transform-origin: 50% 4px;
+		animation: bell-ring 6s ease-in-out infinite;
+	}
+
+	@keyframes bell-ring {
+		0%,
+		64%,
+		100% {
+			rotate: 0deg;
+		}
+
+		68% {
+			rotate: 12deg;
+		}
+
+		72% {
+			rotate: -10deg;
+		}
+
+		76% {
+			rotate: 7deg;
+		}
+
+		80% {
+			rotate: -5deg;
+		}
+
+		84% {
+			rotate: 2deg;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.announce-shimmer,
+		.announce-bell svg {
+			animation: none;
+		}
+	}
+</style>
 
 <script>
   // 公告关闭：按内容记忆（localStorage），内容更新后自动重新显示。
