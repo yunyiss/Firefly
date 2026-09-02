@@ -216,5 +216,9 @@ function renderRandomPosts() {
 }
 
 renderRandomPosts();
-document.addEventListener('swup:contentReplaced', renderRandomPosts);
+// 本脚本为 inline，Swup 切页会重跑，需防重复绑定
+if (!window.__recommendedPostSwupBound) {
+  window.__recommendedPostSwupBound = true;
+  document.addEventListener('swup:content:replace', renderRandomPosts);
+}
 </script>

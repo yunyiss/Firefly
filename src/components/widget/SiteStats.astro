@@ -181,8 +181,11 @@ const stats = [
   // 页面加载时更新
   updateDynamicStats();
 
-  // 页面切换时重新更新
-  document.addEventListener("swup:contentReplaced", () => {
-    setTimeout(updateDynamicStats, 100);
-  });
+  // 页面切换时重新更新（本脚本为 inline，Swup 切页会重跑，需防重复绑定）
+  if (!window.__siteStatsSwupBound) {
+    window.__siteStatsSwupBound = true;
+    document.addEventListener("swup:content:replace", () => {
+      setTimeout(updateDynamicStats, 100);
+    });
+  }
 </script>

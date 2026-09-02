@@ -1809,7 +1809,7 @@ function disableAnimation() {
   window.addEventListener("scroll", onRevealScroll, { passive: true });
   window.addEventListener("resize", onRevealScroll, { passive: true });
   // Swup 切页进入主页后内容替换完成，扫描一次新渲染的板块
-  document.addEventListener("swup:contentReplaced", () =>
+  document.addEventListener("swup:content:replace", () =>
     setTimeout(sweepReveal, 60),
   );
   setTimeout(sweepReveal, 300);
@@ -1905,7 +1905,7 @@ function disableAnimation() {
 
   initImageLoadFadeIn();
   document.addEventListener('astro:page-load', initImageLoadFadeIn);
-  document.addEventListener('swup:contentReplaced', () => {
+  document.addEventListener('swup:content:replace', () => {
     requestAnimationFrame(initImageLoadFadeIn);
   });
 </script>

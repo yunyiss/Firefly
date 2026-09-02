@@ -345,7 +345,7 @@ const hideSidebarOnPostPage =
     window.floatingTOCListenersInitialized = true;
 
     // Swup 路由切换
-    document.addEventListener("swup:contentReplaced", () => {
+    document.addEventListener("swup:content:replace", () => {
       setTimeout(initFloatingTOC, 100);
     });
     

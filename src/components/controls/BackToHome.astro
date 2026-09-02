@@ -45,6 +45,10 @@ import { url } from "@/utils/url-utils";
   updateBackToHomeVisibility();
   
   // Re-check on view transitions or swup navigation
+  // 本脚本为 inline，Swup 切页会重跑，需防重复绑定
   document.addEventListener("astro:page-load", updateBackToHomeVisibility);
-  document.addEventListener("swup:contentReplaced", updateBackToHomeVisibility);
+  if (!window.__backToHomeSwupBound) {
+    window.__backToHomeSwupBound = true;
+    document.addEventListener("swup:content:replace", updateBackToHomeVisibility);
+  }
 </script>

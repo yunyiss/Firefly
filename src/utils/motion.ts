@@ -114,11 +114,9 @@ function bindLenisToSwupTransitions(): void {
 		// force: true 强制覆盖任何进行中的惯性滚动，immediate 直接跳转
 		lenis?.scrollTo(target, { immediate: true, force: true });
 	};
-	["swup:visit:start", "swup:content:replace", "swup:contentReplaced"].forEach(
-		(name) => {
-			document.addEventListener(name, freeze);
-		},
-	);
+	["swup:visit:start", "swup:content:replace"].forEach((name) => {
+		document.addEventListener(name, freeze);
+	});
 	document.addEventListener("swup:page:view", () => setTimeout(release, 0));
 }
 
@@ -145,12 +143,10 @@ function releaseContentWrapperTransform(): void {
 	// onload 动画总时长 ≈ 120ms + 交错延迟 ≈ 240ms；播完即清。
 	// 不能挂 load 事件——随机壁纸大图会把它拖到几秒之后
 	setTimeout(clear, 600);
-	// Swup 实际派发的 DOM 事件是 swup:content:replace（冒号形式）；
-	// swup:contentReplaced 是老命名，保留两个事件名做兼容。清理本身幂等，重复触发无害。
-	["swup:content:replace", "swup:contentReplaced"].forEach((name) => {
-		document.addEventListener(name, () => {
-			setTimeout(clear, 300);
-		});
+	// Swup 派发的 DOM 事件是 swup:content:replace（冒号形式，v4 命名）。
+	// 清理本身幂等，重复触发无害。
+	document.addEventListener("swup:content:replace", () => {
+		setTimeout(clear, 300);
 	});
 }
 

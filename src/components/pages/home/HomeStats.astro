@@ -152,7 +152,7 @@ const spanLastOnMobile = stats.length % 2 === 1;
   } else {
     initStatsCountUp();
   }
-  document.addEventListener("swup:contentReplaced", () =>
+  document.addEventListener("swup:content:replace", () =>
     setTimeout(initStatsCountUp, 50),
   );
 </script>
