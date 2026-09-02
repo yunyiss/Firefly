@@ -347,9 +347,10 @@ const config = announcementConfig;
 	}
 </style>
 
-<script>
+<script is:inline>
   // 公告关闭：按内容记忆（localStorage），内容更新后自动重新显示。
-  // 放在组件脚本里随页面执行；非首页或关闭态直接隐藏容器，避免闪烁后消失。
+  // 用 is:inline：公告元素在 Swup 容器内随切页重建，本脚本随 SwupScriptsPlugin
+  // 每次切页重跑，重新绑定关闭按钮并重新检查关闭记忆（打包脚本只执行一次会失效）。
   (function () {
     const KEY = "home-announcement-dismissed";
     const el = document.getElementById("home-announcement");
