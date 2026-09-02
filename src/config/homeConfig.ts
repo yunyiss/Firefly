@@ -147,9 +147,9 @@ export const homeConfig: HomeConfig = {
 		// 「查看全部」按钮文字
 		moreText: "查看全部",
 		// 卡片流：单张卡片宽度（px）
-		cardWidth: 320,
+		cardWidth: 390,
 		// 卡片流：封面高度（px）
-		coverHeight: 170,
+		coverHeight: 220,
 		// 卡片流：扫入滚动距离系数
 		streamScroll: 0.6,
 	},

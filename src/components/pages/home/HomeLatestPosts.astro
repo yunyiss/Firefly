@@ -75,7 +75,7 @@ const sectionStyle = [
 	>
 		<div class="stream-head">
 			<h2 class="stream-title">
-				<span class="index">02</span>
+				<span class="index">03</span>
 				{sectionTitle}
 			</h2>
 			<a class="more-link" href={url("/posts/")}>
@@ -175,12 +175,12 @@ const sectionStyle = [
 
 	.stream-stage {
 		position: relative;
-		padding: 1.5rem 0 2rem;
+		padding: 1rem 0 1.5rem;
 	}
 
 	.stream-head {
-		width: min(1120px, 92vw);
-		margin: 0 auto 1.75rem;
+		width: min(1330px, 98vw);
+		margin: 0 auto 1.5rem;
 		display: flex;
 		align-items: baseline;
 		justify-content: space-between;
@@ -190,7 +190,7 @@ const sectionStyle = [
 		display: flex;
 		align-items: baseline;
 		gap: 0.75rem;
-		font-size: 1.5rem;
+		font-size: 1.7rem;
 		font-weight: 700;
 		color: #fff;
 		text-shadow: 0 3px 18px rgb(0 0 0 / 0.5);
@@ -198,7 +198,7 @@ const sectionStyle = [
 
 	.stream-title .index {
 		font-family: var(--font-mono, monospace);
-		font-size: 0.875rem;
+		font-size: 0.95rem;
 		color: rgb(255 255 255 / 0.45);
 	}
 
@@ -206,7 +206,7 @@ const sectionStyle = [
 		display: inline-flex;
 		align-items: center;
 		gap: 0.25rem;
-		font-size: 0.8125rem;
+		font-size: 0.9rem;
 		color: rgb(255 255 255 / 0.6);
 		transition:
 			color 0.15s ease,
@@ -218,12 +218,12 @@ const sectionStyle = [
 		gap: 0.5rem;
 	}
 
-	/* 卡片流对齐层：与 .stream-head 同宽同居中（min(1120px,92vw)）。
+	/* 卡片流对齐层：与 .stream-head 同宽同居中（min(1290px,98vw)）。
 	   仅用于让首卡左缘对齐框左、末卡右缘（scrub 终点）对齐框右；
 	   不做 overflow 裁剪——左右两侧允许卡片自然伸出框外，保留"露出下一张"的灵活感，
 	   真正裁掉视口外内容的是 .stream-section 的 overflow:hidden */
 	.stream-track-wrap {
-		width: min(1120px, 92vw);
+		width: min(1330px, 98vw);
 		margin: 0 auto;
 	}
 
@@ -231,7 +231,7 @@ const sectionStyle = [
 		display: flex;
 		width: max-content;
 		will-change: transform;
-		padding: 2.5rem 0;
+		padding: 1.6rem 0;
 		padding-left: 0;
 		padding-right: 0;
 	}
@@ -331,21 +331,21 @@ const sectionStyle = [
 	}
 
 	.stream-info {
-		padding: 0.9rem 1.1rem 1.05rem;
+		padding: 1rem 1.25rem 1.2rem;
 		display: flex;
 		flex-direction: column;
-		gap: 0.45rem;
+		gap: 0.55rem;
 	}
 
 	.stream-cat {
 		display: inline-flex;
 		align-items: center;
 		align-self: flex-start;
-		padding: 0.12rem 0.55rem;
+		padding: 0.16rem 0.62rem;
 		border-radius: 999px;
 		background: var(--primary);
 		color: #fff;
-		font-size: 0.65rem;
+		font-size: 0.72rem;
 		font-weight: 600;
 		letter-spacing: 0.08em;
 		text-shadow: none;
@@ -355,7 +355,7 @@ const sectionStyle = [
 		display: flex;
 		align-items: center;
 		gap: 0.4rem;
-		font-size: 1.02rem;
+		font-size: 1.14rem;
 		font-weight: 700;
 		line-height: 1.45;
 		color: rgb(255 255 255 / 0.95);
@@ -372,15 +372,15 @@ const sectionStyle = [
 
 	.stream-info .lock {
 		flex-shrink: 0;
-		width: 1rem;
-		height: 1rem;
+		width: 1.05rem;
+		height: 1.05rem;
 		color: rgb(255 255 255 / 0.45);
 	}
 
 	.stream-excerpt {
 		margin: 0;
-		font-size: 0.78rem;
-		line-height: 1.55;
+		font-size: 0.85rem;
+		line-height: 1.6;
 		color: rgb(255 255 255 / 0.65);
 		text-shadow: 0 1px 6px rgb(0 0 0 / 0.35);
 		display: -webkit-box;
@@ -393,8 +393,8 @@ const sectionStyle = [
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
-		gap: 0.45rem;
-		font-size: 0.72rem;
+		gap: 0.5rem;
+		font-size: 0.8rem;
 		color: rgb(255 255 255 / 0.5);
 		text-shadow: 0 1px 6px rgb(0 0 0 / 0.35);
 	}
@@ -414,7 +414,7 @@ const sectionStyle = [
 		}
 
 		.stream-info .t {
-			font-size: 0.95rem;
+			font-size: 1rem;
 		}
 	}
 </style>

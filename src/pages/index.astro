@@ -82,6 +82,13 @@ const showStatsRow =
         {(homeConfig.profile.enable || homeConfig.music.enable) && (
           <section class="home-scene reveal-section" data-motion="showcase">
             <div class="scene-inner">
+              <div class="showcase-head">
+                <h2 class="showcase-title">
+                  <span class="index">02</span>
+                  关于我
+                </h2>
+                <span class="showcase-subtitle">作者与日常</span>
+              </div>
               <div class="showcase-grid">
                 {homeConfig.profile.enable && <HomeProfile />}
                 <div class="showcase-side">
@@ -180,15 +187,21 @@ const showStatsRow =
     padding: 6.5rem 0;
   }
 
+  /* 资料卡场景（关于我）：单独微调上下间距——上面与探索区之间留白更宽，下面与文章流之间收窄 */
+  section[data-motion="showcase"] {
+    padding-top: 6rem;
+    padding-bottom: 0rem;
+  }
+
   .scene-inner {
-    width: min(1120px, 92vw);
+    width: min(1330px, 98vw);
     margin: 0 auto;
   }
 
 /* 探索容器：与时钟区上下等宽 */
 	.explore-wrap {
-		width: min(1120px, 92vw);
-		margin: 4.5rem auto 0;
+		width: min(1330px, 98vw);
+		margin: 2.5rem auto 0;
 	}
 
   /* 时钟区块：右侧樱花水印缓旋装饰 */
@@ -223,9 +236,39 @@ const showStatsRow =
   }
 
   /* ===== 关于我：资料为主，二次元图 + 音乐为副 ===== */
+  /* 分节标题：与「探索 / 最新文章」同风格（编号 + 标题 + 副标题） */
+  .showcase-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+  }
+
+  .showcase-title {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 3px 18px rgb(0 0 0 / 0.5);
+  }
+
+  .showcase-title .index {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.95rem;
+    color: rgb(255 255 255 / 0.45);
+  }
+
+  .showcase-subtitle {
+    font-size: 0.95rem;
+    color: rgb(255 255 255 / 0.55);
+    text-shadow: 0 2px 10px rgb(0 0 0 / 0.45);
+  }
+
   .showcase-grid {
     display: grid;
-    grid-template-columns: 1fr 1.25fr;
+    grid-template-columns: 1fr 1.5fr;
     gap: 1.25rem;
     align-items: stretch;
   }
