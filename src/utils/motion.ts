@@ -23,6 +23,8 @@ let engineReady = false;
 let lenis: Lenis | null = null;
 /** 当前页面创建的时间轴，切页时统一销毁（其 ScrollTrigger 由 teardown 单独清） */
 let pageTimelines: gsap.core.Timeline[] = [];
+/** 待执行的延迟回调（gsap.delayedCall），切页时统一清掉，避免残留触发已销毁的时间轴 */
+let pendingDelays: gsap.core.Tween[] = [];
 /** 被补间触碰过的元素，切页时清除内联样式，交还 CSS 控制 */
 let managedEls: Element[] = [];
 
@@ -163,6 +165,9 @@ export function teardownPageMotion(): void {
 		tl.kill();
 	});
 	pageTimelines = [];
+	// 清理未执行的延迟回调（入场停顿等），避免切页后触发已销毁的时间轴
+	pendingDelays.forEach((d) => d.kill());
+	pendingDelays = [];
 	managedEls.forEach((el) => {
 		gsap.set(el as HTMLElement, {
 			clearProps: "opacity,transform,filter,visibility,transition",
@@ -271,7 +276,7 @@ function setupFooterSignature(): void {
 		},
 		onStart: () => svg.classList.add("sign-drawn"),
 	});
-	tl.to(path, { strokeDashoffset: 0, duration: 2.4, ease: "power2.inOut" }, 0);
+	tl.to(path, { strokeDashoffset: 0, duration: 3.6, ease: "power2.inOut" }, 0);
 	pageTimelines.push(tl);
 	managedEls.push(path);
 	collectTimelineTargets(tl);
@@ -349,22 +354,49 @@ function setupHeroScrub(): void {
 	managedEls.push(heroContainer);
 }
 
-/** 单个板块的入场触发器：每次滚入视口都重播（离开回上方后复位） */
+/** 单个板块的入场：滚到区块主体入眼后，自动完整播放一遍 */
 function choreograph(
 	trigger: HTMLElement,
 	build: (tl: gsap.core.Timeline) => void,
 ): void {
-	// .reveal-section 的 CSS 过渡（opacity/transform）会与逐帧补间叠加，必须关闭；
-	// 同时解除 CSS 预隐藏（透明度/位移交给下面的补间接管）
-	gsap.set(trigger, { opacity: 1, y: 0, transition: "none" });
-	const tl = gsap.timeline({
-		scrollTrigger: {
-			trigger,
-			start: "top 78%",
-			toggleActions: "play none none none",
+	gsap.set(trigger, { transition: "none" });
+	// 时间轴暂停创建，仅由 onUpdate 实时判定后手动播放：
+	// 不用 onEnter/toggleActions（它们依赖 ScrollTrigger 的初始 start 计算——
+	// explore 顶部贴首屏，布局未稳时 start 可能算错而提前播放）。
+	// onUpdate 每次滚动都用 getBoundingClientRect 实时判断区块是否真正进入视口，
+	// 从根上避免"还没滚到区块动画就放完"
+	const tl = gsap.timeline({ paused: true });
+	let played = false;
+	ScrollTrigger.create({
+		trigger,
+		start: "top bottom",
+		end: "bottom top",
+		onUpdate: () => {
+			if (played) return;
+			// 页面刚加载时（scrollY=0）ScrollTrigger 也会跑一次 update，
+			// 此时壁纸/图片未加载、explore 顶部可能被误判进视口——
+			// 只有用户发生真实滚动后才允许入场
+			if (window.scrollY <= 0) return;
+			// 区块顶部进入视口上半（用户已能看到区块主体）才播放入场
+			const r = trigger.getBoundingClientRect();
+			if (r.top <= window.innerHeight * 0.55) {
+				played = true;
+				tl.play();
+			}
 		},
+		invalidateOnRefresh: true,
 	});
 	build(tl);
+	// paused timeline 不会自动渲染 fromTo 的 from 态——子元素（资料卡/右侧对向入场等）
+	// 在入场前若保持 opacity 1，play 瞬间会被 fromTo 强行拉到 0 再滑入，产生"闪一下"跳变。
+	// 这里把每个 tween 的 from 值预置到目标上：入场前元素就是隐藏/就位的起点状态，
+	// 播放时平滑过渡到终态，视觉连贯
+	tl.getChildren(false, true, false).forEach((tw) => {
+		const from = tw.vars?.from;
+		if (!from) return;
+		const targets = (tw as gsap.core.Tween).targets();
+		gsap.set(targets, from);
+	});
 	pageTimelines.push(tl);
 	collectTimelineTargets(tl);
 }
@@ -411,6 +443,10 @@ function setupSectionChoreography(homeRoot: HTMLElement | null): void {
 			}
 
 			if (exploreCards.length) {
+				// 入场前先把子元素显式预置为 from 态（inline 写入）——
+				// paused timeline 中非首位 tween 的 from 值不会自动渲染，
+				// 不预置会导致播放瞬间元素从可见跳到隐藏再滑入的"闪一下"
+				gsap.set(exploreCards, { y: 30, opacity: 0 });
 				tl.fromTo(
 					exploreCards,
 					{ y: 30, opacity: 0 },
@@ -424,6 +460,8 @@ function setupSectionChoreography(homeRoot: HTMLElement | null): void {
 					0.12,
 				);
 			} else if (pair && pair.length >= 2) {
+				gsap.set(pair[0], opposingShift(-shift, isMobile));
+				gsap.set(pair[1], opposingShift(shift, isMobile));
 				tl.fromTo(
 					pair[0],
 					opposingShift(-shift, isMobile),
@@ -472,12 +510,13 @@ function setupPostStream(): void {
 	// 经典 GSAP 横向滚动：整行钉住，滚动驱动整行向左流过；
 	// 起始位 = 自然位（首卡对齐框左缘，任何失败模式下区块都不空），
 	// 终点 = 末卡贴齐框右缘，pin 恰好结束、刚好凑成一整行
+	const pace = 1.6; // 动画节奏系数：滚动区间拉长后，卡片移动相对滚动更慢、更从容
 	const tl = gsap.timeline({
 		defaults: { ease: "none" },
 		scrollTrigger: {
 			trigger: section,
 			start: "top top",
-			end: () => `+=${travel()}`,
+			end: () => `+=${Math.round(travel() * pace)}`,
 			pin: true,
 			// Lenis 使用 window 的原生滚动位置，保持 ScrollTrigger 默认的 fixed pin。
 			// 强制 transform pin 会在钉住边界额外叠加位移补偿，容易造成视觉抖动。
