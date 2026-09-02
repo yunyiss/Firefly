@@ -40,7 +40,7 @@ const showStatsRow =
   {
     homeEnabled ? (
       <div id="home-sections">
-        {homeConfig.announcement.enable && <HomeAnnouncement />}
+        {/* 公告气泡：位置在下方探索卡片场景内（HomeAnnouncement 随 explore-wrap 渲染） */}
 
         {/* ===== 时间 + 探索：时钟统计在上，细分隔线，软 3D 卡片网格在下 ===== */}
         {(homeConfig.sectionCards.enable || showStatsRow) && (
@@ -73,6 +73,8 @@ const showStatsRow =
                 <HomeExplore />
               </div>
             )}
+            {/* 公告气泡：放在区段（section）左侧留白处，垂直居中 */}
+            {homeConfig.announcement.enable && <HomeAnnouncement class:list={["announce-in-explore"]} />}
           </section>
         )}
 
@@ -183,11 +185,11 @@ const showStatsRow =
     margin: 0 auto;
   }
 
-  /* 探索容器：与时钟区上下等宽 */
-  .explore-wrap {
-    width: min(1120px, 92vw);
-    margin: 4.5rem auto 0;
-  }
+/* 探索容器：与时钟区上下等宽 */
+	.explore-wrap {
+		width: min(1120px, 92vw);
+		margin: 4.5rem auto 0;
+	}
 
   /* 时钟区块：右侧樱花水印缓旋装饰 */
   .clock-scene {

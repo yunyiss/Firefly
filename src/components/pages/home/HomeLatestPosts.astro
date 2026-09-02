@@ -1,9 +1,9 @@
 ---
+import { render } from "astro:content";
 import { Icon } from "astro-icon/components";
 import CoverImage from "@/components/common/CoverImage.astro";
 import { homeConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
-import { render } from "astro:content";
 import { i18n } from "@/i18n/translation";
 import { getSortedPosts } from "@/utils/content-utils";
 import { formatDateToYYYYMMDD } from "@/utils/date-utils";
@@ -40,7 +40,11 @@ const latestPosts = await Promise.all(
 			coverBasePath: getFileDirFromPath(entry.filePath || ""),
 			coverApiUrls: getApiUrlList(entry.data.image, entry.id),
 			password: !!entry.data.password,
-			excerpt: (entry.data.description ?? remarkPluginFrontmatter.excerpt ?? "").trim(),
+			excerpt: (
+				entry.data.description ??
+				remarkPluginFrontmatter.excerpt ??
+				""
+			).trim(),
 			minutes: remarkPluginFrontmatter.minutes,
 		};
 	}),
@@ -85,7 +89,8 @@ const sectionStyle = [
 			</a>
 		</div>
 
-		<div class="stream-track" id="stream-track">
+		<div class="stream-track-wrap">
+			<div class="stream-track" id="stream-track">
 			{
 				latestPosts.map((post, index) => (
 					<a class="stream-card" href={post.url} aria-label={post.title}>
@@ -148,6 +153,7 @@ const sectionStyle = [
 					</a>
 				))
 			}
+			</div>
 		</div>
 	</div>
 </section>
@@ -212,14 +218,22 @@ const sectionStyle = [
 		gap: 0.5rem;
 	}
 
+	/* 卡片流对齐层：与 .stream-head 同宽同居中（min(1120px,92vw)）。
+	   仅用于让首卡左缘对齐框左、末卡右缘（scrub 终点）对齐框右；
+	   不做 overflow 裁剪——左右两侧允许卡片自然伸出框外，保留"露出下一张"的灵活感，
+	   真正裁掉视口外内容的是 .stream-section 的 overflow:hidden */
+	.stream-track-wrap {
+		width: min(1120px, 92vw);
+		margin: 0 auto;
+	}
+
 	.stream-track {
 		display: flex;
 		width: max-content;
 		will-change: transform;
 		padding: 2.5rem 0;
-		/* 左右内边距 = 内容区居中偏移：起点首卡对齐内容左缘，终点末卡对齐内容右缘 */
-		padding-left: max(calc((100vw - 1120px) / 2), 1.5rem);
-		padding-right: max(calc((100vw - 1120px) / 2), 1.5rem);
+		padding-left: 0;
+		padding-right: 0;
 	}
 
 	/* 软 3D 樱粉卡片（呼应草图演示⑥） */
@@ -246,6 +260,11 @@ const sectionStyle = [
 		box-shadow:
 			0 20px 38px -16px rgb(240 86 143 / 0.5),
 			inset 0 1px 0 rgb(255 255 255 / 0.28);
+	}
+
+	/* 最后一张卡不留尾部 margin，保证终点末卡右缘正好对齐内容框右缘 */
+	.stream-card:last-child {
+		margin-right: 0;
 	}
 
 	.stream-cover {

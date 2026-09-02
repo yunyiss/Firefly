@@ -108,9 +108,11 @@ function bindLenisToSwupTransitions(): void {
 		// force: true 强制覆盖任何进行中的惯性滚动，immediate 直接跳转
 		lenis?.scrollTo(target, { immediate: true, force: true });
 	};
-	["swup:visit:start", "swup:content:replace", "swup:contentReplaced"].forEach((name) => {
-		document.addEventListener(name, freeze);
-	});
+	["swup:visit:start", "swup:content:replace", "swup:contentReplaced"].forEach(
+		(name) => {
+			document.addEventListener(name, freeze);
+		},
+	);
 	document.addEventListener("swup:page:view", () => setTimeout(release, 0));
 }
 
@@ -207,6 +209,7 @@ export function setupPageMotion(): void {
 
 	setupSectionChoreography(homeRoot);
 	setupPostStream();
+	setupAnnouncementVisibility();
 	refreshMotion();
 	setTimeout(refreshMotion, 400);
 	setTimeout(() => {
@@ -219,6 +222,25 @@ export function setupPageMotion(): void {
 			}
 		});
 	}, 3000);
+}
+
+/**
+ * 公告气泡：随滚动自然淡入淡出。
+ * 绑定气泡自身：顶部从视口底部进入时淡入；继续上滚直到其顶部完全越过
+ * 视口上缘（top -20%）才淡出——高竖签不会在仍可见时提前消失。
+ */
+function setupAnnouncementVisibility(): void {
+	const el = document.getElementById("home-announcement");
+	if (!el?.classList.contains("announce-in-explore")) return;
+	ScrollTrigger.create({
+		trigger: el,
+		start: "top bottom",
+		end: "top -20%",
+		onEnter: () => el.classList.add("is-visible"),
+		onEnterBack: () => el.classList.add("is-visible"),
+		onLeave: () => el.classList.remove("is-visible"),
+		onLeaveBack: () => el.classList.remove("is-visible"),
+	});
 }
 
 /**
@@ -436,17 +458,26 @@ function setupPostStream(): void {
 	const section = document.getElementById("home-posts-stream");
 	const track = document.getElementById("stream-track");
 	if (!section || !track) return;
+	// 取景框 .stream-track-wrap（与头部同宽居中）：scrub 平移以框宽为基准，
+	// 使起点首卡贴框左缘、终点末卡贴框右缘；无框（异常）时回退视口宽
+	const frame = track.parentElement as HTMLElement | null;
+	const travel = () =>
+		Math.max(
+			600,
+			Math.round(
+				track.scrollWidth - (frame ? frame.offsetWidth : window.innerWidth),
+			),
+		);
 
 	// 经典 GSAP 横向滚动：整行钉住，滚动驱动整行向左流过；
-	// 起始位 = 自然位（首卡对齐左缘，任何失败模式下区块都不空），
-	// 终点 = 末卡贴齐视口右缘，pin 恰好结束、刚好凑成一整行
+	// 起始位 = 自然位（首卡对齐框左缘，任何失败模式下区块都不空），
+	// 终点 = 末卡贴齐框右缘，pin 恰好结束、刚好凑成一整行
 	const tl = gsap.timeline({
 		defaults: { ease: "none" },
 		scrollTrigger: {
 			trigger: section,
 			start: "top top",
-			end: () =>
-				"+=" + Math.max(600, Math.round(track.scrollWidth - window.innerWidth)),
+			end: () => `+=${travel()}`,
 			pin: true,
 			// Lenis 使用 window 的原生滚动位置，保持 ScrollTrigger 默认的 fixed pin。
 			// 强制 transform pin 会在钉住边界额外叠加位移补偿，容易造成视觉抖动。
@@ -456,12 +487,7 @@ function setupPostStream(): void {
 			invalidateOnRefresh: true,
 		},
 	});
-	tl.fromTo(
-		track,
-		{ x: 0 },
-		{ x: () => -(track.scrollWidth - window.innerWidth) },
-		0,
-	);
+	tl.fromTo(track, { x: 0 }, { x: () => -travel() }, 0);
 	pageTimelines.push(tl);
 	managedEls.push(track);
 	collectTimelineTargets(tl);
