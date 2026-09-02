@@ -84,13 +84,17 @@ export function initMotionEngine(): void {
  * onload-animation 的 forwards 填充会永久留下 translateY(0)——它也是 transform，
  * 会让后代 position:fixed 退化（ScrollTrigger 的 pin 就靠 fixed），必须清掉。
  * 视觉零变化（translateY(0) 等价无 transform），仅在动画播完后清除。
+ *
+ * 注意：Swup 每次切页都会重建 #content-wrapper 节点，因此 clear 内部必须
+ * 重新查询元素，不能闭包持有首次加载时的旧节点（旧节点已从 DOM 移除，
+ * 写它的样式对新页面毫无作用，动画残留会永久存在导致 pin 锚错包含块）。
  */
 function releaseContentWrapperTransform(): void {
-	const wrapper = document.getElementById("content-wrapper");
-	if (!wrapper) return;
 	const clear = () => {
 		// forwards 填充的动画会以更高优先级持续写入 transform，必须连同 animation 一起清；
 		// 但该动画同时负责 opacity 0→1，清掉后必须把终态钉住，否则整个内容区隐形
+		const wrapper = document.getElementById("content-wrapper");
+		if (!wrapper) return;
 		wrapper.style.animation = "none";
 		wrapper.style.transform = "none";
 		wrapper.style.opacity = "1";
@@ -98,8 +102,12 @@ function releaseContentWrapperTransform(): void {
 	// onload 动画总时长 ≈ 120ms + 交错延迟 ≈ 240ms；播完即清。
 	// 不能挂 load 事件——随机壁纸大图会把它拖到几秒之后
 	setTimeout(clear, 600);
-	document.addEventListener("swup:contentReplaced", () => {
-		setTimeout(clear, 300);
+	// Swup 实际派发的 DOM 事件是 swup:content:replace（冒号形式）；
+	// swup:contentReplaced 是老命名，保留两个事件名做兼容。清理本身幂等，重复触发无害。
+	["swup:content:replace", "swup:contentReplaced"].forEach((name) => {
+		document.addEventListener(name, () => {
+			setTimeout(clear, 300);
+		});
 	});
 }
 
