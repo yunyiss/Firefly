@@ -150,7 +150,7 @@ export const homeConfig: HomeConfig = {
 		cardWidth: 390,
 		// 卡片流：封面高度（px）
 		coverHeight: 220,
-		// 卡片流：扫入滚动距离系数
-		streamScroll: 0.6,
+		// 卡片流：钉住滚动距离系数（滚动区间 = 卡片行程 × 该系数，越大越慢越从容）
+		streamScroll: 1.6,
 	},
 };

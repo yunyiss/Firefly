@@ -125,7 +125,7 @@ export interface HomeLatestPostsConfig {
 	cardWidth?: number;
 	/** 卡片流：封面高度（px），默认 185 */
 	coverHeight?: number;
-	/** 卡片流：钉住滚动距离系数，越大这段滚得越长，默认 0.6 */
+	/** 卡片流：钉住滚动距离系数（滚动区间 = 卡片行程 × 该系数），越大越慢越从容，默认 1.6 */
 	streamScroll?: number;
 }
 

@@ -804,6 +804,10 @@ const hasMultipleImages =
 
         // Run on initial load
         setRandomSubtitle();
+
+        // #banner-subtitle 位于 Swup 容器（#banner-overlay-container）内，切页后元素被重建，
+        // 每次页面就绪后重新应用缓存的副标题，保持跨切页一致
+        document.addEventListener('astro:page-load', setRandomSubtitle);
     </script>
 
     <!-- Non-home non-post page title overlay (desktop only) -->

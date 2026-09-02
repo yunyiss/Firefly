@@ -123,7 +123,6 @@ const showStatsRow =
             style={`animation-delay: calc(var(--content-delay) + ${fallbackPosts.length * 50}ms)`}
           >
             <a
-              href="#"
               aria-label={i18n(I18nKey.paginationPrev)}
               aria-disabled="true"
               tabindex="-1"
@@ -140,7 +139,7 @@ const showStatsRow =
               <span class="text-base font-bold text-neutral-700 dark:text-neutral-300">{fallbackLastPage}</span>
             </div>
             <a
-              href={fallbackHasNext ? url("/posts/page/2/") : "#"}
+              href={fallbackHasNext ? url("/posts/page/2/") : undefined}
               aria-label={i18n(I18nKey.paginationNext)}
               aria-disabled={fallbackHasNext ? "false" : "true"}
               tabindex={fallbackHasNext ? "0" : "-1"}

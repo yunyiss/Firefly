@@ -24,7 +24,6 @@ const len = firstPagePosts.length;
     lastPage > 1 && (
       <div class="mx-auto flex flex-row items-center justify-center gap-3 onload-animation" role="navigation" aria-label={i18n(I18nKey.postList)} style={`animation-delay: calc(var(--content-delay) + ${len * 50}ms)`}>
         <a
-          href="#"
           aria-label={i18n(I18nKey.paginationPrev)}
           aria-disabled="true"
           tabindex="-1"
@@ -41,7 +40,7 @@ const len = firstPagePosts.length;
           <span class="text-base font-bold text-neutral-700 dark:text-neutral-300">{lastPage}</span>
         </div>
         <a
-          href={hasNextPage ? url("/posts/page/2/") : "#"}
+          href={hasNextPage ? url("/posts/page/2/") : undefined}
           aria-label={i18n(I18nKey.paginationNext)}
           aria-disabled={hasNextPage ? "false" : "true"}
           tabindex={hasNextPage ? "0" : "-1"}

@@ -18,6 +18,7 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
+import { homeConfig } from "@/config/homeConfig";
 
 let engineReady = false;
 let lenis: Lenis | null = null;
@@ -512,7 +513,9 @@ function setupPostStream(): void {
 	// 经典 GSAP 横向滚动：整行钉住，滚动驱动整行向左流过；
 	// 起始位 = 自然位（首卡对齐框左缘，任何失败模式下区块都不空），
 	// 终点 = 末卡贴齐框右缘，pin 恰好结束、刚好凑成一整行
-	const pace = 1.6; // 动画节奏系数：滚动区间拉长后，卡片移动相对滚动更慢、更从容
+	// 动画节奏系数（pin 滚动区间 = 卡片行程 × pace）：滚动区间拉长后，
+	// 卡片移动相对滚动更慢、更从容。可在 homeConfig.latestPosts.streamScroll 调整
+	const pace = homeConfig.latestPosts.streamScroll ?? 1.6;
 	const tl = gsap.timeline({
 		defaults: { ease: "none" },
 		scrollTrigger: {
