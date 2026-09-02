@@ -831,4 +831,15 @@ html[data-wallpaper-mode="fullscreen"] body:not(.wallpaper-initialized) .w-full.
         min-height: calc(100vh - 5.5rem) !important;
         transition: top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s !important;
     }
+
+    /* 主页「1330px 加宽」容器在 mobile 下与 #main-grid 左右 8px padding 撞车，
+       会撑出右边 8px（视觉上像「右边少了一点点 / 一条分界线」）。
+       改为减去 main-grid padding 的 calc(100% - 16px)，
+       使其与主区内容区严格同宽、左右对齐边界。 */
+    .scene-inner,
+    .explore-wrap,
+    .stream-head,
+    .stream-track-wrap {
+        width: calc(100% - 16px) !important;
+    }
 }
