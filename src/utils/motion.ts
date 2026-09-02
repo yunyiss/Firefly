@@ -108,8 +108,14 @@ function bindLenisToSwupTransitions(): void {
 				// 固定导航栏在视口 y=0，若把 main-grid 顶部对齐到 y=0 会被它盖住约
 				// 5.5rem（Layout scroll:top 的 scrollIntoView 受同一 scroll-margin-top
 				// 影响，此处读取计算值保持一致，避免两处偏移不一致）。
-				const scrollMargin = parseFloat(getComputedStyle(grid).scrollMarginTop) || 0;
-				target = Math.max(0, Math.round(grid.getBoundingClientRect().top + window.scrollY - scrollMargin));
+				const scrollMargin =
+					Number.parseFloat(getComputedStyle(grid).scrollMarginTop) || 0;
+				target = Math.max(
+					0,
+					Math.round(
+						grid.getBoundingClientRect().top + window.scrollY - scrollMargin,
+					),
+				);
 			}
 		}
 		// force: true 强制覆盖任何进行中的惯性滚动，immediate 直接跳转
