@@ -3,6 +3,7 @@ import { Icon } from "astro-icon/components";
 import CoverImage from "@/components/common/CoverImage.astro";
 import { homeConfig } from "@/config";
 import I18nKey from "@/i18n/i18nKey";
+import { render } from "astro:content";
 import { i18n } from "@/i18n/translation";
 import { getSortedPosts } from "@/utils/content-utils";
 import { formatDateToYYYYMMDD } from "@/utils/date-utils";
@@ -22,20 +23,28 @@ const coverHeight = homeConfig.latestPosts.coverHeight ?? 185;
 const streamScroll = homeConfig.latestPosts.streamScroll ?? 0.6;
 
 const allPosts = await getSortedPosts();
-const latestPosts = allPosts
-	.slice(0, homeConfig.latestPosts.count || 4)
-	.map((entry) => ({
-		entry,
-		title: entry.data.title,
-		url: getPostUrlBySlug(entry.id),
-		date: formatDateToYYYYMMDD(entry.data.published),
-		category: entry.data.category,
-		tags: (entry.data.tags ?? []).slice(0, 1),
-		cover: processCoverImageSync(entry.data.image, entry.id),
-		coverBasePath: getFileDirFromPath(entry.filePath || ""),
-		coverApiUrls: getApiUrlList(entry.data.image, entry.id),
-		password: !!entry.data.password,
-	}));
+const latestPostsRaw = allPosts.slice(0, homeConfig.latestPosts.count || 4);
+
+// 取每篇文章的摘要与阅读时长（参考 kanako：分类/标题/时间/摘要/标签 信息密度）
+const latestPosts = await Promise.all(
+	latestPostsRaw.map(async (entry) => {
+		const { remarkPluginFrontmatter } = await render(entry);
+		return {
+			entry,
+			title: entry.data.title,
+			url: getPostUrlBySlug(entry.id),
+			date: formatDateToYYYYMMDD(entry.data.published),
+			category: entry.data.category,
+			tags: (entry.data.tags ?? []).slice(0, 2),
+			cover: processCoverImageSync(entry.data.image, entry.id),
+			coverBasePath: getFileDirFromPath(entry.filePath || ""),
+			coverApiUrls: getApiUrlList(entry.data.image, entry.id),
+			password: !!entry.data.password,
+			excerpt: (entry.data.description ?? remarkPluginFrontmatter.excerpt ?? "").trim(),
+			minutes: remarkPluginFrontmatter.minutes,
+		};
+	}),
+);
 
 const showCover = homeConfig.latestPosts.showCover !== false;
 
@@ -107,6 +116,7 @@ const sectionStyle = [
 							)}
 						</div>
 						<div class="stream-info">
+							{post.category && <span class="stream-cat">{post.category}</span>}
 							<div class="t">
 								<span>{post.title}</span>
 								{post.password && (
@@ -118,10 +128,21 @@ const sectionStyle = [
 									/>
 								)}
 							</div>
+							{post.excerpt && <p class="stream-excerpt">{post.excerpt}</p>}
 							<div class="m">
-								{post.category && <span class="cat">{post.category}</span>}
 								<span class="font-mono">{post.date}</span>
-								{post.tags.map((tag) => <span class="text-white/40">#{tag}</span>)}
+								{post.minutes && (
+									<span class="meta-dot" aria-hidden="true">·</span>
+								)}
+								{post.minutes && (
+									<span>{Math.max(1, Math.round(post.minutes))} min</span>
+								)}
+								{post.tags.length > 0 && (
+									<span class="meta-dot" aria-hidden="true">·</span>
+								)}
+								{post.tags.map((tag) => (
+									<span class="tag">#{tag}</span>
+								))}
 							</div>
 						</div>
 					</a>
@@ -291,25 +312,43 @@ const sectionStyle = [
 	}
 
 	.stream-info {
-		padding: 1rem 1.125rem 1.125rem;
+		padding: 0.9rem 1.1rem 1.05rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+	}
+
+	.stream-cat {
+		display: inline-flex;
+		align-items: center;
+		align-self: flex-start;
+		padding: 0.12rem 0.55rem;
+		border-radius: 999px;
+		background: var(--primary);
+		color: #fff;
+		font-size: 0.65rem;
+		font-weight: 600;
+		letter-spacing: 0.08em;
+		text-shadow: none;
 	}
 
 	.stream-info .t {
 		display: flex;
 		align-items: center;
 		gap: 0.4rem;
-		font-size: 1.03rem;
+		font-size: 1.02rem;
 		font-weight: 700;
-		line-height: 1.5;
-		color: rgb(255 255 255 / 0.92);
-		white-space: nowrap;
-		overflow: hidden;
+		line-height: 1.45;
+		color: rgb(255 255 255 / 0.95);
 		text-shadow: 0 2px 12px rgb(0 0 0 / 0.35);
 	}
 
 	.stream-info .t span {
 		overflow: hidden;
 		text-overflow: ellipsis;
+		white-space: nowrap;
+		flex: 1;
+		min-width: 0;
 	}
 
 	.stream-info .lock {
@@ -319,17 +358,34 @@ const sectionStyle = [
 		color: rgb(255 255 255 / 0.45);
 	}
 
-	.stream-info .m {
-		margin-top: 0.55rem;
-		display: flex;
-		align-items: center;
-		gap: 0.65rem;
-		font-size: 0.75rem;
-		color: rgb(255 255 255 / 0.5);
+	.stream-excerpt {
+		margin: 0;
+		font-size: 0.78rem;
+		line-height: 1.55;
+		color: rgb(255 255 255 / 0.65);
+		text-shadow: 0 1px 6px rgb(0 0 0 / 0.35);
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		overflow: hidden;
 	}
 
-	.stream-info .m .cat {
-		color: var(--primary);
+	.stream-info .m {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		font-size: 0.72rem;
+		color: rgb(255 255 255 / 0.5);
+		text-shadow: 0 1px 6px rgb(0 0 0 / 0.35);
+	}
+
+	.stream-info .m .meta-dot {
+		color: rgb(255 255 255 / 0.3);
+	}
+
+	.stream-info .m .tag {
+		color: rgb(255 183 210 / 0.85);
 	}
 
 	@media (max-width: 767px) {
