@@ -28,7 +28,7 @@ declare global {
 					name: string;
 					artist: string;
 					url: string;
-					pic: string;
+					pic?: string;
 					lrc?: string;
 				}>;
 				currentIndex: number;
@@ -36,7 +36,7 @@ declare global {
 					name: string;
 					artist: string;
 					url: string;
-					pic: string;
+					pic?: string;
 					lrc?: string;
 				} | null;
 				isPlaying: boolean;

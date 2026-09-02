@@ -12,7 +12,7 @@ let progress = $state(0);
 let currentTimeStr = $state("0:00");
 let durationStr = $state("0:00");
 
-const manager = () => (window as any).__fireflyMusic;
+const manager = () => window.__fireflyMusic;
 
 function syncFromManager() {
 	const m = manager();
