@@ -77,6 +77,41 @@ export function initMotionEngine(): void {
 	}
 	applyLenisPrevent();
 	releaseContentWrapperTransform();
+	bindLenisToSwupTransitions();
+}
+
+/**
+ * Swup 整页切换时冻结 Lenis，切完再把滚动归位。
+ *
+ * 背景：这个 swup 配置下切页不会自动回顶——从首页深处切走再切回，
+ * 页面停留在原深滚动处。全屏壁纸模式下 hero scrub（滚动驱动）progress=1，
+ * hero 文案会被顶出视口外不可见。Layout 的 scroll:top 钩子实际不触发
+ * （ScrollPlugin 未启用），因此需要在此处主动归位。
+ *
+ * 目标遵循模板语义：首页 → 0；全屏模式其它页 → #main-grid 顶部（与
+ * ScrollDownIndicator / Layout scroll:top 意图一致）；其余 → 0。
+ */
+function bindLenisToSwupTransitions(): void {
+	if (!lenis) return;
+	const freeze = () => lenis?.stop();
+	const release = () => {
+		lenis?.start();
+		const mode = document.documentElement.getAttribute("data-wallpaper-mode");
+		let target = 0;
+		if (mode === "fullscreen" && !isMotionHome()) {
+			const grid = document.getElementById("main-grid");
+			if (grid) {
+				// 文档坐标系下的 main-grid 顶部（壁纸之后的内容起点）
+				target = Math.round(grid.getBoundingClientRect().top + window.scrollY);
+			}
+		}
+		// force: true 强制覆盖任何进行中的惯性滚动，immediate 直接跳转
+		lenis?.scrollTo(target, { immediate: true, force: true });
+	};
+	["swup:visit:start", "swup:content:replace", "swup:contentReplaced"].forEach((name) => {
+		document.addEventListener(name, freeze);
+	});
+	document.addEventListener("swup:page:view", () => setTimeout(release, 0));
 }
 
 /**
