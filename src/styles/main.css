@@ -603,24 +603,6 @@ html {
   @apply text-xs;
 }
 
-/* 响应式分页样式 */
-.device-mobile .pagination-info {
-  @apply text-xs;
-}
-
-.device-tablet .pagination-info {
-  @apply text-sm;
-}
-
-.device-desktop .pagination-info {
-  @apply text-base;
-}
-
-/* 分页信息样式 */
-.pagination-info {
-  @apply text-sm text-(--text-secondary) text-center mb-2;
-}
-
 /* Lenis 平滑滚动基础样式（utils/motion.ts） */
 html.lenis,
 html.lenis body {

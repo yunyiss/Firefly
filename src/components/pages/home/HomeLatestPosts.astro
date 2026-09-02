@@ -137,10 +137,10 @@ const sectionStyle = [
 							<div class="m">
 								<span class="font-mono">{post.date}</span>
 								{post.minutes && (
-									<span class="meta-dot" aria-hidden="true">·</span>
-								)}
-								{post.minutes && (
-									<span>{Math.max(1, Math.round(post.minutes))} min</span>
+									<>
+										<span class="meta-dot" aria-hidden="true">·</span>
+										<span>{Math.max(1, Math.round(post.minutes))} min</span>
+									</>
 								)}
 								{post.tags.length > 0 && (
 									<span class="meta-dot" aria-hidden="true">·</span>
@@ -159,13 +159,9 @@ const sectionStyle = [
 </section>
 
 <style>
+	/* 横向滚动舞台：整行 pin 钉住（100vh），滚动驱动卡片从右向左流过（motion.ts） */
 	.stream-section {
 		position: relative;
-	}
-
-	/* 横向滚动舞台：整行被 pin 钉住，滚动驱动卡片从右向左流过（motion.ts） */
-	/* 横向滚动舞台：整行 pin 钉住（100vh），滚动驱动卡片从右向左流过 */
-	.stream-section {
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
@@ -408,11 +404,6 @@ const sectionStyle = [
 	}
 
 	@media (max-width: 767px) {
-		.stream-head {
-			left: 1rem;
-			right: 1rem;
-		}
-
 		.stream-info .t {
 			font-size: 1rem;
 		}

@@ -170,7 +170,9 @@ export function teardownPageMotion(): void {
 	});
 	pageTimelines = [];
 	// 清理未执行的延迟回调（入场停顿等），避免切页后触发已销毁的时间轴
-	pendingDelays.forEach((d) => d.kill());
+	pendingDelays.forEach((d) => {
+		d.kill();
+	});
 	pendingDelays = [];
 	managedEls.forEach((el) => {
 		gsap.set(el as HTMLElement, {
