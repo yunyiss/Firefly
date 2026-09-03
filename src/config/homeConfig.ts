@@ -65,7 +65,7 @@ export const homeConfig: HomeConfig = {
 	profile: {
 		enable: true,
 		// 二次元图片（展示卡右侧大图，留空显示渐变占位框，后续填图片地址即可）
-		animeImage: "",
+		animeImage: "https://img.weibiyi.com/file/1788431493949_148524586_p0.png",
 	},
 
 	// 内容板块入口卡片
